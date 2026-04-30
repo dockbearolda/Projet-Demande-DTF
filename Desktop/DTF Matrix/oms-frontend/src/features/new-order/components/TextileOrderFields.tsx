@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Pencil, Search } from "lucide-react";
-import { selectLine, selectLines, useNewOrderStore } from "../store";
+import { selectLine, useNewOrderStore } from "../store";
 import { getTextileModel } from "../runtimeCatalog";
 import {
   computeColorChangeFee,

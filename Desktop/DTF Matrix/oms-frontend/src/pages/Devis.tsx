@@ -132,7 +132,7 @@ export function DevisPage() {
           </p>
         </div>
         <Link
-          to="/flash-devis-v2"
+          to="/flash-devis"
           style={{
             display: "inline-flex",
             alignItems: "center",

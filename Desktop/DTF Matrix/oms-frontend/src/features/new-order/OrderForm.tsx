@@ -10,7 +10,6 @@ import { useSupplierCatalog } from "@/hooks/useSupplierCatalog";
 import { useToast } from "@/components/Toast";
 import { generateReference } from "@/lib/utils";
 import {
-  selectDraftId,
   selectHeader,
   selectLine,
   selectLines,
@@ -90,7 +89,6 @@ export function OrderForm({
   // Auto-save (5 s debounce after every meaningful change). The hook owns the
   // subscription + indicator state; nothing else to do here.
   useAutoSaveDraft();
-  const draftId = useNewOrderStore(selectDraftId);
   const deleteDraft = useDeleteDraft();
   const resetSaveStatus = useAutoSaveStatus((s) => s.set);
 

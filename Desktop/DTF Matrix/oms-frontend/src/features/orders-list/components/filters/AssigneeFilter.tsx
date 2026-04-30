@@ -12,6 +12,8 @@ const SLOTS: Array<{ id: Slot; label: string }> = [
   { id: "unassigned", label: "Non assigné" },
 ];
 
+const ASSIGNED_TO_VALUES = new Set<AssignedTo>(["L", "C", "M"]);
+
 interface Props {
   value: Slot[];
   onChange: (updater: (prev: Slot[]) => Slot[]) => void;
@@ -22,7 +24,13 @@ interface Props {
  * "Toi" lorsqu'un opérateur est connu via `getCurrentUser()` (localStorage).
  */
 export function AssigneeFilter({ value, onChange }: Props) {
-  const me = useMemo(() => getCurrentUser(), []);
+  // Narrow `me` to AssignedTo (L|C|M) since the filter slots derive from
+  // backend-known operators. If currentUser is "A" (frontend-only operator
+  // pending backend support), the "Toi" shortcut is hidden.
+  const me = useMemo<AssignedTo | null>(() => {
+    const u = getCurrentUser();
+    return u && ASSIGNED_TO_VALUES.has(u as AssignedTo) ? (u as AssignedTo) : null;
+  }, []);
   const meActive = me ? value.length === 1 && value[0] === me : false;
 
   function toggle(slot: Slot) {
