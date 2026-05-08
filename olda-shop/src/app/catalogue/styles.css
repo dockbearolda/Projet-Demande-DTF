@@ -1,0 +1,959 @@
+/* Styles scopés au sélecteur de modèles (étape 1/4 du configurateur).
+ * Tout est imbriqué sous .olda-modeles pour ne pas fuir dans le reste du site. */
+
+.olda-modeles {
+  --m-cream: #f6f4ef;
+  --m-ivory: #ebeae8;
+  --m-terracotta: #c5532e;
+  --m-ink: #202930;
+  --m-ink-60: rgba(32, 41, 48, 0.6);
+  --m-ink-40: rgba(32, 41, 48, 0.4);
+  --m-ink-12: rgba(32, 41, 48, 0.12);
+  --m-ink-08: rgba(32, 41, 48, 0.08);
+  --m-sage: #cdd4cd;
+  --m-duck: #2c4a52;
+  --m-duck-shadow-1: rgba(44, 74, 82, 0.10);
+  --m-duck-shadow-2: rgba(44, 74, 82, 0.18);
+  --m-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --m-t1: 140ms;
+  --m-t2: 220ms;
+  --m-t3: 340ms;
+  --m-r-md: 14px;
+  --m-r-lg: 16px;
+
+  background: var(--m-cream);
+  color: var(--m-ink);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui, sans-serif;
+  font-feature-settings: "tnum" 1, "ss01" 1;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100dvh;
+}
+
+.olda-modeles *,
+.olda-modeles *::before,
+.olda-modeles *::after {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.olda-modeles button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.olda-modeles :focus-visible {
+  outline: 3px solid var(--m-duck);
+  outline-offset: 2px;
+}
+
+/* ───── Topbar ───── */
+.olda-modeles__topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 32px 14px;
+  border-bottom: 1px solid var(--m-ink-08);
+  background: var(--m-cream);
+  position: sticky;
+  top: 0;
+  z-index: 32;
+}
+
+.olda-modeles__brand {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.olda-modeles__brand-mark {
+  color: var(--m-terracotta);
+}
+
+.olda-modeles__nav {
+  display: flex;
+  gap: 26px;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--m-ink-60);
+}
+
+.olda-modeles__nav a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--m-t1) var(--m-ease);
+}
+
+.olda-modeles__nav a:hover {
+  color: var(--m-ink);
+}
+
+.olda-modeles__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--m-ink-60);
+  background: none;
+  border: none;
+  padding: 6px 0;
+  transition: color var(--m-t1) var(--m-ease);
+}
+
+.olda-modeles__back:hover {
+  color: var(--m-ink);
+}
+
+/* ───── Progress ───── */
+.olda-modeles__progress {
+  padding: 22px 32px 20px;
+  border-bottom: 1px solid var(--m-ink-08);
+  position: sticky;
+  top: 53px;
+  z-index: 31;
+  background: var(--m-cream);
+}
+
+.olda-modeles__progress-overline {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--m-ink-60);
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.olda-modeles__progress-step-count {
+  font-feature-settings: "tnum" 1;
+  letter-spacing: 0.12em;
+}
+
+.olda-modeles__progress-bars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.olda-modeles__progress-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.olda-modeles__progress-track {
+  height: 2px;
+  background: var(--m-sage);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.olda-modeles__progress-fill {
+  height: 100%;
+  background: var(--m-terracotta);
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform var(--m-t3) var(--m-ease);
+}
+
+.olda-modeles__progress-bar--current .olda-modeles__progress-fill {
+  transform: scaleX(1);
+}
+
+.olda-modeles__progress-bar--done .olda-modeles__progress-fill {
+  transform: scaleX(1);
+  background: var(--m-ink);
+}
+
+.olda-modeles__progress-label {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--m-ink-60);
+  font-weight: 500;
+}
+
+.olda-modeles__progress-bar--current .olda-modeles__progress-label {
+  color: var(--m-ink);
+  font-weight: 600;
+}
+
+/* ───── Tabs ───── */
+.olda-modeles__tabs {
+  display: flex;
+  gap: 28px;
+  padding: 22px 32px 16px;
+  border-bottom: 1px solid var(--m-ink-08);
+}
+
+.olda-modeles__tab {
+  background: none;
+  border: none;
+  padding: 4px 0;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--m-ink-60);
+  position: relative;
+  transition: color var(--m-t1) var(--m-ease);
+}
+
+.olda-modeles__tab::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -17px;
+  height: 1px;
+  background: var(--m-terracotta);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform var(--m-t2) var(--m-ease);
+}
+
+.olda-modeles__tab--active {
+  color: var(--m-ink);
+  font-weight: 500;
+}
+
+.olda-modeles__tab--active::after {
+  transform: scaleX(1);
+}
+
+.olda-modeles__tab-count {
+  margin-left: 6px;
+  font-size: 11px;
+  color: var(--m-ink-40);
+  font-feature-settings: "tnum" 1;
+}
+
+/* ───── Filters ───── */
+.olda-modeles__filters {
+  padding: 18px 32px 14px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.olda-modeles__filter-group {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.olda-modeles__filter-label {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--m-ink-60);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.olda-modeles__chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.olda-modeles__chip {
+  font-size: 12px;
+  padding: 7px 12px;
+  border: 1px solid var(--m-ink-12);
+  border-radius: 999px;
+  color: var(--m-ink-60);
+  background: transparent;
+  transition: color var(--m-t1) var(--m-ease),
+    border-color var(--m-t1) var(--m-ease);
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+.olda-modeles__chip:hover {
+  color: var(--m-ink);
+  border-color: var(--m-ink-40);
+}
+
+.olda-modeles__chip--active {
+  color: var(--m-ink);
+  border-color: var(--m-ink);
+  box-shadow: inset 0 -2px 0 var(--m-terracotta);
+  font-weight: 500;
+}
+
+/* ───── Note ───── */
+.olda-modeles__note {
+  padding: 10px 32px 18px;
+  font-size: 12px;
+  color: var(--m-ink-60);
+  letter-spacing: 0.01em;
+}
+
+.olda-modeles__note strong {
+  color: var(--m-ink);
+  font-weight: 500;
+}
+
+/* ───── Grid ───── */
+.olda-modeles__grid {
+  display: grid;
+  grid-template-columns: repeat(var(--m-cols, 4), 1fr);
+  gap: 24px;
+  padding: 0 32px 64px;
+}
+
+/* ───── Card ───── */
+.olda-modeles__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--m-ivory);
+  border-radius: var(--m-r-lg);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  color: inherit;
+  transition: transform var(--m-t2) var(--m-ease),
+    box-shadow var(--m-t2) var(--m-ease);
+  overflow: hidden;
+}
+
+.olda-modeles__card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 40px -22px var(--m-duck-shadow-2),
+    0 4px 12px -8px var(--m-duck-shadow-1);
+}
+
+.olda-modeles__card:active {
+  transform: scale(0.985);
+  transition-duration: var(--m-t1);
+}
+
+.olda-modeles__card--selected {
+  box-shadow: 0 0 0 2px var(--m-ink) inset,
+    0 18px 40px -20px var(--m-duck-shadow-2);
+}
+
+.olda-modeles__card-media {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--m-ivory);
+}
+
+.olda-modeles__card-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  transform: scale(1);
+  transition: transform var(--m-t3) var(--m-ease);
+}
+
+.olda-modeles__card:hover .olda-modeles__card-img {
+  transform: scale(1);
+}
+
+.olda-modeles__card-pill {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--m-ink-60);
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(246, 244, 239, 0.85);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid var(--m-ink-08);
+  font-weight: 500;
+}
+
+.olda-modeles__card-soldout {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--m-cream);
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(32, 41, 48, 0.78);
+  font-weight: 500;
+}
+
+.olda-modeles__card-body {
+  padding: 16px 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.olda-modeles__card-name {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.olda-modeles__card-meta {
+  font-size: 11px;
+  color: var(--m-ink-60);
+  letter-spacing: 0.01em;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-feature-settings: "tnum" 1;
+}
+
+.olda-modeles__card-sep {
+  color: var(--m-ink-12);
+}
+
+.olda-modeles__card-specs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--m-ink-08);
+}
+
+.olda-modeles__spec {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.olda-modeles__spec-label {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--m-ink-40);
+  font-weight: 500;
+}
+
+.olda-modeles__spec-value {
+  font-size: 12px;
+  color: var(--m-ink);
+}
+
+.olda-modeles__card-price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 4px;
+}
+
+.olda-modeles__card-price-prefix {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--m-ink-40);
+  font-weight: 500;
+}
+
+.olda-modeles__card-price-value {
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  font-feature-settings: "tnum" 1;
+}
+
+.olda-modeles__card-cta {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px;
+  background: var(--m-ink);
+  color: var(--m-cream);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+  transform: translateY(100%);
+  transition: transform var(--m-t2) var(--m-ease);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border: none;
+}
+
+.olda-modeles__card:hover .olda-modeles__card-cta,
+.olda-modeles__card--selected .olda-modeles__card-cta {
+  transform: translateY(0);
+}
+
+/* ───── Atelier card ───── */
+.olda-modeles__atelier {
+  background: var(--m-cream);
+  border: 1px solid var(--m-ink-08);
+  border-radius: var(--m-r-lg);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 360px;
+  position: relative;
+  overflow: hidden;
+}
+
+.olda-modeles__atelier-overline {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--m-terracotta);
+  font-weight: 500;
+  margin-bottom: 14px;
+}
+
+.olda-modeles__atelier-title {
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  margin: 0 0 12px;
+}
+
+.olda-modeles__atelier-body {
+  font-size: 13px;
+  color: var(--m-ink-60);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.olda-modeles__atelier-rule {
+  width: 28px;
+  height: 1px;
+  background: var(--m-terracotta);
+  margin-top: 18px;
+}
+
+.olda-modeles__atelier-pictogram {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  width: 96px;
+  height: 96px;
+  opacity: 0.5;
+}
+
+/* ───── Femme block ───── */
+.olda-modeles__femme {
+  padding: 12px 32px 64px;
+}
+
+.olda-modeles__femme-overline {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--m-ink-60);
+  font-weight: 500;
+  margin-bottom: 18px;
+}
+
+.olda-modeles__femme-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 56px;
+  align-items: stretch;
+}
+
+.olda-modeles__femme-card-wrap {
+  display: flex;
+  align-items: stretch;
+}
+
+.olda-modeles__femme-card-wrap > * {
+  flex: 1;
+}
+
+.olda-modeles__femme-editorial {
+  background: var(--m-ivory);
+  border-radius: var(--m-r-lg);
+  padding: 40px 44px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.olda-modeles__femme-rule {
+  width: 32px;
+  height: 1px;
+  background: var(--m-terracotta);
+  margin-bottom: 20px;
+}
+
+.olda-modeles__femme-title {
+  font-size: 28px;
+  letter-spacing: -0.015em;
+  font-weight: 500;
+  line-height: 1.15;
+  margin: 0 0 16px;
+}
+
+.olda-modeles__femme-body {
+  font-size: 14px;
+  line-height: 1.65;
+  margin: 0 0 14px;
+  max-width: 48ch;
+}
+
+.olda-modeles__femme-list {
+  font-size: 13px;
+  color: var(--m-ink-60);
+  margin: 0 0 28px;
+  line-height: 1.7;
+}
+
+.olda-modeles__femme-form {
+  display: flex;
+  gap: 8px;
+  max-width: 460px;
+}
+
+.olda-modeles__femme-input {
+  flex: 1;
+  background: transparent;
+  border: 1px solid var(--m-ink-12);
+  border-bottom-color: var(--m-ink);
+  border-radius: 0;
+  padding: 12px 4px;
+  font-size: 13px;
+  color: var(--m-ink);
+  outline: none;
+  letter-spacing: 0.01em;
+  transition: border-color var(--m-t2) var(--m-ease);
+}
+
+.olda-modeles__femme-input::placeholder {
+  color: var(--m-ink-40);
+}
+
+.olda-modeles__femme-input:focus {
+  border-bottom-color: var(--m-terracotta);
+}
+
+.olda-modeles__femme-btn {
+  padding: 10px 18px;
+  border: 1px solid var(--m-terracotta);
+  color: var(--m-terracotta);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 500;
+  border-radius: 999px;
+  background: transparent;
+  white-space: nowrap;
+  transition: background var(--m-t2) var(--m-ease),
+    color var(--m-t2) var(--m-ease);
+}
+
+.olda-modeles__femme-btn:hover {
+  background: var(--m-terracotta);
+  color: var(--m-cream);
+}
+
+.olda-modeles__femme-thanks {
+  font-size: 13px;
+  color: var(--m-terracotta);
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+/* ───── Sticky mobile CTA ───── */
+.olda-modeles__sticky-cta {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 16px calc(16px + env(safe-area-inset-bottom));
+  background: rgba(246, 244, 239, 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-top: 1px solid var(--m-ink-08);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  transform: translateY(120%);
+  transition: transform var(--m-t3) var(--m-ease);
+  z-index: 40;
+}
+
+.olda-modeles__sticky-cta--visible {
+  transform: translateY(0);
+}
+
+.olda-modeles__sticky-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.olda-modeles__sticky-name {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.olda-modeles__sticky-price {
+  font-size: 11px;
+  color: var(--m-ink-60);
+  font-feature-settings: "tnum" 1;
+}
+
+.olda-modeles__sticky-btn {
+  padding: 14px 22px;
+  background: var(--m-ink);
+  color: var(--m-cream);
+  border-radius: 999px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+  flex-shrink: 0;
+  min-height: 44px;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ──────────────────────────────────────
+   Tablette ≤ 1023 px : 3 colonnes
+────────────────────────────────────── */
+@media (max-width: 1023px) {
+  .olda-modeles__grid {
+    grid-template-columns: repeat(3, 1fr);
+    padding: 0 24px 64px;
+  }
+
+  .olda-modeles__topbar,
+  .olda-modeles__progress,
+  .olda-modeles__tabs,
+  .olda-modeles__filters,
+  .olda-modeles__note {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .olda-modeles__femme {
+    padding: 12px 24px 64px;
+  }
+
+  .olda-modeles__femme-layout {
+    gap: 32px;
+  }
+}
+
+/* ──────────────────────────────────────
+   Mobile ≤ 640 px : 2 colonnes serrées
+────────────────────────────────────── */
+@media (max-width: 640px) {
+  .olda-modeles {
+    font-size: 14px;
+  }
+
+  .olda-modeles__topbar {
+    padding: 14px 16px 12px;
+  }
+
+  .olda-modeles__nav {
+    display: none;
+  }
+
+  .olda-modeles__progress {
+    padding: 14px 16px 14px;
+    top: 47px;
+  }
+
+  .olda-modeles__progress-overline {
+    margin-bottom: 10px;
+    font-size: 9px;
+  }
+
+  .olda-modeles__progress-label {
+    font-size: 10px;
+  }
+
+  .olda-modeles__tabs {
+    padding: 16px 16px 14px;
+    gap: 22px;
+  }
+
+  .olda-modeles__tab {
+    font-size: 14px;
+  }
+
+  .olda-modeles__tab::after {
+    bottom: -15px;
+  }
+
+  .olda-modeles__filters {
+    padding: 14px 16px 12px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 16px;
+    scroll-snap-type: x proximity;
+    position: sticky;
+    top: 137px;
+    background: var(--m-cream);
+    z-index: 28;
+  }
+
+  .olda-modeles__filters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .olda-modeles__filter-group {
+    flex-shrink: 0;
+    scroll-snap-align: start;
+  }
+
+  .olda-modeles__filter-label {
+    font-size: 9px;
+  }
+
+  .olda-modeles__chip {
+    font-size: 13px;
+    padding: 9px 14px;
+    min-height: 36px;
+  }
+
+  .olda-modeles__note {
+    padding: 8px 16px 14px;
+    font-size: 12px;
+  }
+
+  .olda-modeles__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 0 16px 120px;
+  }
+
+  .olda-modeles__card-body {
+    padding: 12px 12px 14px;
+    gap: 4px;
+  }
+
+  .olda-modeles__card-name {
+    font-size: 13px;
+    line-height: 1.3;
+  }
+
+  .olda-modeles__card-meta {
+    font-size: 10px;
+    flex-wrap: wrap;
+  }
+
+  .olda-modeles__card-price-prefix {
+    font-size: 9px;
+  }
+
+  .olda-modeles__card-price-value {
+    font-size: 16px;
+  }
+
+  .olda-modeles__card-pill {
+    font-size: 9px;
+    padding: 3px 7px;
+  }
+
+  /* Sur mobile : pas de hover, donc le CTA reste révélé en sticky bottom-sheet */
+  .olda-modeles__card-cta {
+    display: none;
+  }
+
+  .olda-modeles__atelier {
+    grid-column: span 2;
+    padding: 22px;
+    min-height: 0;
+  }
+
+  .olda-modeles__atelier-title {
+    font-size: 17px;
+  }
+
+  .olda-modeles__atelier-body {
+    font-size: 13px;
+  }
+
+  .olda-modeles__atelier-pictogram {
+    width: 72px;
+    height: 72px;
+    bottom: 16px;
+    right: 16px;
+  }
+
+  .olda-modeles__femme {
+    padding: 12px 16px 120px;
+  }
+
+  .olda-modeles__femme-layout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .olda-modeles__femme-editorial {
+    padding: 28px 24px;
+  }
+
+  .olda-modeles__femme-title {
+    font-size: 22px;
+  }
+
+  .olda-modeles__femme-body {
+    font-size: 14px;
+  }
+
+  .olda-modeles__femme-list {
+    font-size: 13px;
+  }
+
+  .olda-modeles__femme-form {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .olda-modeles__femme-btn {
+    align-self: flex-start;
+    padding: 12px 22px;
+  }
+}
+
+/* ──────────────────────────────────────
+   Reduce motion
+────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .olda-modeles *,
+  .olda-modeles *::before,
+  .olda-modeles *::after {
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+  }
+}
