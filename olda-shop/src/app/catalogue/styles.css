@@ -2,18 +2,21 @@
  * Tout est imbriqué sous .olda-modeles pour ne pas fuir dans le reste du site. */
 
 .olda-modeles {
-  --m-cream: #f6f4ef;
-  --m-ivory: #ebeae8;
-  --m-terracotta: #c5532e;
+  /* Palette OLDA d'origine — cf. design-system-OLDA.md */
+  --m-cream: #ebeae8;                       /* ivoire : surfaces claires & barres sticky */
+  --m-ivory: #f5f7f8;                        /* fond des cartes */
+  --m-duck: #4a6274;                         /* accent principal (Duck Blue) */
+  --m-duck-focus: #42596a;                   /* accent survol */
+  --m-duck-ring: #6b8191;                    /* anneau de focus */
   --m-ink: #202930;
   --m-ink-60: rgba(32, 41, 48, 0.6);
   --m-ink-40: rgba(32, 41, 48, 0.4);
   --m-ink-12: rgba(32, 41, 48, 0.12);
   --m-ink-08: rgba(32, 41, 48, 0.08);
-  --m-sage: #cdd4cd;
-  --m-duck: #2c4a52;
-  --m-duck-shadow-1: rgba(44, 74, 82, 0.10);
-  --m-duck-shadow-2: rgba(44, 74, 82, 0.18);
+  --m-sage: #8ba0af;                          /* secondaire / barres */
+  --m-sage-2: #adb8b9;
+  --m-duck-shadow-1: rgba(74, 98, 116, 0.12);
+  --m-duck-shadow-2: rgba(74, 98, 116, 0.20);
   --m-ease: cubic-bezier(0.32, 0.72, 0, 1);
   --m-t1: 140ms;
   --m-t2: 220ms;
@@ -21,7 +24,8 @@
   --m-r-md: 14px;
   --m-r-lg: 16px;
 
-  background: var(--m-cream);
+  background: linear-gradient(140deg, #ebeae8, #cdd4cd 50%, #adb8b9);
+  background-attachment: fixed;
   color: var(--m-ink);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui, sans-serif;
   font-feature-settings: "tnum" 1, "ss01" 1;
@@ -41,7 +45,7 @@
 }
 
 .olda-modeles :focus-visible {
-  outline: 3px solid var(--m-duck);
+  outline: 3px solid var(--m-duck-ring);
   outline-offset: 2px;
 }
 
@@ -66,7 +70,7 @@
 }
 
 .olda-modeles__brand-mark {
-  color: var(--m-terracotta);
+  color: var(--m-duck);
 }
 
 .olda-modeles__nav {
@@ -175,7 +179,7 @@
 
 .olda-modeles__progress-bar--done .olda-modeles__progress-btn:hover .olda-modeles__progress-label,
 .olda-modeles__progress-bar--done .olda-modeles__progress-btn:hover .olda-modeles__progress-value {
-  color: var(--m-terracotta);
+  color: var(--m-duck);
 }
 
 .olda-modeles__progress-track {
@@ -187,7 +191,7 @@
 
 .olda-modeles__progress-fill {
   height: 100%;
-  background: var(--m-terracotta);
+  background: var(--m-duck);
   transform-origin: left;
   transform: scaleX(0);
   transition: transform var(--m-t3) var(--m-ease);
@@ -199,7 +203,7 @@
 
 .olda-modeles__progress-bar--done .olda-modeles__progress-fill {
   transform: scaleX(1);
-  background: var(--m-terracotta);
+  background: var(--m-duck);
 }
 
 .olda-modeles__progress-bar--todo .olda-modeles__progress-track {
@@ -221,7 +225,7 @@
 }
 
 .olda-modeles__progress-check {
-  color: var(--m-terracotta);
+  color: var(--m-duck);
   flex-shrink: 0;
 }
 
@@ -286,7 +290,7 @@
   right: 0;
   bottom: -17px;
   height: 1px;
-  background: var(--m-terracotta);
+  background: var(--m-duck);
   transform: scaleX(0);
   transform-origin: center;
   transition: transform var(--m-t2) var(--m-ease);
@@ -359,7 +363,7 @@
 .olda-modeles__chip--active {
   color: var(--m-ink);
   border-color: var(--m-ink);
-  box-shadow: inset 0 -2px 0 var(--m-terracotta);
+  box-shadow: inset 0 -2px 0 var(--m-duck);
   font-weight: 500;
 }
 
@@ -581,7 +585,7 @@
   font-size: 10px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--m-terracotta);
+  color: var(--m-duck);
   font-weight: 500;
   margin-bottom: 14px;
 }
@@ -604,7 +608,7 @@
 .olda-modeles__atelier-rule {
   width: 28px;
   height: 1px;
-  background: var(--m-terracotta);
+  background: var(--m-duck);
   margin-top: 18px;
 }
 
@@ -659,7 +663,7 @@
 .olda-modeles__femme-rule {
   width: 32px;
   height: 1px;
-  background: var(--m-terracotta);
+  background: var(--m-duck);
   margin-bottom: 20px;
 }
 
@@ -710,13 +714,13 @@
 }
 
 .olda-modeles__femme-input:focus {
-  border-bottom-color: var(--m-terracotta);
+  border-bottom-color: var(--m-duck);
 }
 
 .olda-modeles__femme-btn {
   padding: 10px 18px;
-  border: 1px solid var(--m-terracotta);
-  color: var(--m-terracotta);
+  border: 1px solid var(--m-duck);
+  color: var(--m-duck);
   font-size: 12px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -729,13 +733,13 @@
 }
 
 .olda-modeles__femme-btn:hover {
-  background: var(--m-terracotta);
+  background: var(--m-duck);
   color: var(--m-cream);
 }
 
 .olda-modeles__femme-thanks {
   font-size: 13px;
-  color: var(--m-terracotta);
+  color: var(--m-duck);
   letter-spacing: 0.04em;
   margin: 0;
 }
@@ -747,7 +751,7 @@
   left: 0;
   right: 0;
   padding: 12px 16px calc(16px + env(safe-area-inset-bottom));
-  background: rgba(246, 244, 239, 0.94);
+  background: rgba(235, 234, 232, 0.94);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-top: 1px solid var(--m-ink-08);
