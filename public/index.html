@@ -144,47 +144,6 @@
             transition: all 0.3s;
         }
 
-        /* Badge score (Maquette) */
-        .score-ring {
-            display:inline-flex; align-items:center; justify-content:center;
-            width:56px; height:56px; border-radius:50%;
-            font-weight:900; font-size:18px; color:#fff;
-        }
-        .score-good { background: linear-gradient(135deg, #16a34a, #22c55e); }
-        .score-mid { background: linear-gradient(135deg, #ea580c, #f59e0b); }
-        .score-bad { background: linear-gradient(135deg, #dc2626, #ef4444); }
-
-        .criterion {
-            display:flex; align-items:center; gap:8px;
-            padding: 8px 12px;
-            border:1px solid #e5e7eb;
-            border-radius:10px;
-            background:#fff;
-            font-size:12px; font-weight:600; color:#374151;
-        }
-        .criterion-ok { border-color: #bbf7d0; background:#f0fdf4; color:#15803d; }
-        .criterion-ko { border-color: #fecaca; background:#fef2f2; color:#b91c1c; }
-        .criterion-na { border-color: #e5e7eb; background:#f9fafb; color:#6b7280; }
-
-        .dropzone {
-            border: 2px dashed #cbd5e1;
-            border-radius: 16px;
-            padding: 40px 20px;
-            text-align:center;
-            background:#f8fafc;
-            transition: all 0.2s;
-            cursor:pointer;
-        }
-        .dropzone:hover, .dropzone.drag-over {
-            border-color: var(--duck);
-            background:rgba(74,98,116,0.06);
-        }
-
-        /* Pastille multicolor */
-        .dot-multi {
-            background: conic-gradient(#e74c3c 0deg 60deg, #f39c12 60deg 120deg, #f1c40f 120deg 180deg, #2ecc71 180deg 240deg, #3498db 240deg 300deg, #9b59b6 300deg 360deg);
-        }
-
         /* Select couleur avec pastille preview */
         .color-select-wrapper { position: relative; }
         .color-select-wrapper select { padding-left: 2.2rem !important; }
@@ -201,17 +160,6 @@
             z-index: 1;
         }
 
-        /* Impression */
-        #print-only-container { display: none; }
-        @media print {
-            body { background: white !important; font-family: sans-serif; }
-            #app-container { display: none !important; }
-            #print-only-container { display: block !important; padding: 20px; }
-            .print-header { border-bottom: 2px solid black; padding-bottom: 10px; margin-bottom: 20px; }
-            .print-table { width: 100%; border-collapse: collapse; }
-            .print-table th { text-align: left; padding: 8px; border-bottom: 1px solid #ccc; font-size: 12px; }
-            .print-table td { padding: 8px; border-bottom: 1px dashed #eee; font-size: 14px; font-weight: bold; }
-        }
     </style>
 </head>
 <body class="min-h-screen text-gray-900 pb-16">
@@ -241,24 +189,6 @@
                     <div class="flex flex-wrap items-center gap-3">
                         <button onclick="toggleForm()" class="bg-duck text-white text-sm font-semibold px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-lg hover:bg-duckFocus">
                             <i data-lucide="plus" class="w-4 h-4"></i> Demande de DTF
-                        </button>
-                        <div class="relative flex-1 sm:flex-none sm:w-64">
-                            <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted2"></i>
-                            <input type="text" id="search-input" oninput="filterRequests()" placeholder="Rechercher un client, logo..." style="border:1px solid var(--field-border)" class="w-full pl-10 pr-4 py-2.5 bg-white/80 rounded-xl text-sm font-medium shadow-sm text-ink">
-                        </div>
-                        <button onclick="openMaquetteModal()" class="olda-card text-ink text-sm font-semibold px-4 py-2.5 rounded-xl flex items-center gap-2 hover:bg-white/80">
-                            <i data-lucide="palette" class="w-4 h-4 text-duck"></i> Demande Maquette
-                        </button>
-                        <button onclick="openMaquetteListModal()" class="olda-card text-ink text-sm font-semibold px-4 py-2.5 rounded-xl flex items-center gap-2 hover:bg-white/80">
-                            <i data-lucide="file-image" class="w-4 h-4 text-muted2"></i>
-                            <span>Maquettes</span>
-                            <span id="maquette-count-badge" class="bg-duck text-white text-[10px] font-black px-1.5 py-0.5 rounded hidden">0</span>
-                        </button>
-                        <button onclick="preparePrint()" class="olda-card text-ink text-sm font-semibold px-4 py-2.5 rounded-xl flex items-center gap-2 hover:bg-white/80">
-                            <i data-lucide="printer" class="w-4 h-4 text-muted2"></i> Imprimer
-                        </button>
-                        <button onclick="openArchivesModal()" class="olda-card text-ink text-sm font-semibold px-4 py-2.5 rounded-xl flex items-center gap-2 hover:bg-white/80">
-                            <i data-lucide="folder-clock" class="w-4 h-4 text-muted2"></i> Archives
                         </button>
                     </div>
                 </div>
@@ -454,108 +384,6 @@
         </div>
     </div>
 
-    <!-- =========== MODALE ARCHIVES =========== -->
-    <div id="archives-backdrop" class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
-        <div id="archives-modal" class="bg-white p-6 sm:p-8 rounded-[24px] shadow-2xl w-[92%] max-w-[900px] max-h-[85vh] overflow-hidden flex flex-col transform scale-95 transition-transform duration-300 opacity-0">
-            <div class="flex justify-between items-center mb-6 shrink-0">
-                <div>
-                    <h3 class="text-xl font-bold text-gray-900 tracking-tight flex items-center gap-2"><i data-lucide="folder-clock" class="w-5 h-5"></i> Archives</h3>
-                    <p class="text-[13px] font-medium text-gray-400 mt-1" id="archives-count-label">Chargement…</p>
-                </div>
-                <button onclick="closeArchivesModal()" class="text-gray-400 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 w-10 h-10 flex items-center justify-center rounded-full transition-colors self-start">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-            <div id="archives-list" class="overflow-y-auto flex-1 -mx-2 px-2 space-y-2">
-                <div class="p-8 text-center text-gray-400 font-medium">Chargement…</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- =========== MODALE DEMANDE MAQUETTE =========== -->
-    <div id="maquette-backdrop" class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
-        <div id="maquette-modal" class="bg-white p-6 sm:p-8 rounded-[24px] shadow-2xl w-[92%] max-w-[720px] max-h-[90vh] overflow-y-auto transform scale-95 transition-transform duration-300 opacity-0">
-            <div class="flex justify-between items-center mb-6">
-                <div>
-                    <h3 class="text-xl font-bold text-gray-900 tracking-tight flex items-center gap-2"><i data-lucide="palette" class="w-5 h-5"></i> Nouvelle Demande de Maquette</h3>
-                    <p class="text-[13px] font-medium text-gray-400 mt-1">Analyse automatique du fichier reçu du client.</p>
-                </div>
-                <button onclick="closeMaquetteModal()" class="text-gray-400 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 w-10 h-10 flex items-center justify-center rounded-full transition-colors self-start">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
-                <div>
-                    <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Client</label>
-                    <input type="text" id="mq_client" placeholder="ex: Boutique Alpha" class="w-full text-[15px] font-semibold border border-gray-200 bg-gray-50/50 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brandDarkBlue focus:bg-white transition-all">
-                </div>
-                <div>
-                    <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Description (facultatif)</label>
-                    <input type="text" id="mq_description" placeholder="ex: logo pour t-shirt équipe" class="w-full text-sm font-semibold border border-gray-200 bg-gray-50/50 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brandDarkBlue focus:bg-white transition-all">
-                </div>
-            </div>
-            <div>
-                <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Fichier reçu du client</label>
-                <input type="file" id="mq_file_input" class="hidden" accept="image/*,.svg,.ai,.eps,.pdf,.cdr">
-                <div id="mq_dropzone" class="dropzone" onclick="document.getElementById('mq_file_input').click()">
-                    <i data-lucide="upload-cloud" class="w-10 h-10 mx-auto text-gray-400 mb-3"></i>
-                    <p class="font-bold text-gray-700">Cliquer ou glisser le fichier ici</p>
-                    <p class="text-xs text-gray-400 mt-1">JPG, PNG, SVG, AI, PDF, EPS… — max 30 Mo</p>
-                    <p id="mq_file_name" class="text-sm font-semibold text-brandDarkBlue mt-3 hidden"></p>
-                </div>
-            </div>
-            <button id="mq_submit" onclick="submitMaquette()" class="w-full mt-6 bg-brandDarkBlue text-white text-[15px] font-bold py-4 rounded-xl flex justify-center items-center gap-2 hover:bg-duckFocus transition-colors shadow-lg shadow-blue-900/20 disabled:opacity-50 disabled:cursor-not-allowed">
-                <i data-lucide="sparkles" class="w-5 h-5"></i>
-                <span id="mq_submit_text">Analyser le fichier</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- =========== MODALE LISTE MAQUETTES =========== -->
-    <div id="mq-list-backdrop" class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
-        <div id="mq-list-modal" class="bg-white p-6 sm:p-8 rounded-[24px] shadow-2xl w-[94%] max-w-[1100px] max-h-[90vh] overflow-hidden flex flex-col transform scale-95 transition-transform duration-300 opacity-0">
-            <div class="flex justify-between items-center mb-6 shrink-0">
-                <div>
-                    <h3 class="text-xl font-bold text-gray-900 tracking-tight flex items-center gap-2"><i data-lucide="file-image" class="w-5 h-5"></i> Demandes de Maquette</h3>
-                    <p class="text-[13px] font-medium text-gray-400 mt-1" id="mq-list-count-label">Chargement…</p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button onclick="closeMaquetteListModal(); openMaquetteModal();" class="bg-brandDarkBlue text-white text-sm font-semibold px-4 py-2 rounded-xl flex items-center gap-2 hover:bg-duckFocus transition-colors">
-                        <i data-lucide="plus" class="w-4 h-4"></i> Nouvelle
-                    </button>
-                    <button onclick="closeMaquetteListModal()" class="text-gray-400 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 w-10 h-10 flex items-center justify-center rounded-full transition-colors">
-                        <i data-lucide="x" class="w-5 h-5"></i>
-                    </button>
-                </div>
-            </div>
-            <div id="mq-list-container" class="overflow-y-auto flex-1 -mx-2 px-2 space-y-4">
-                <div class="p-8 text-center text-gray-400 font-medium">Chargement…</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- =========== ZONE IMPRESSION =========== -->
-    <div id="print-only-container">
-        <div class="print-header">
-            <h1 style="font-size: 24px; font-weight: 800; margin: 0;">Fiche de Production Atelier - DTF</h1>
-            <p style="color: #666; margin: 5px 0 0 0;"><span id="print-mode" style="font-weight:700;"></span> · <span id="print-date"></span></p>
-        </div>
-        <table class="print-table">
-            <thead>
-                <tr>
-                    <th>CLIENT</th>
-                    <th>COMMANDE</th>
-                    <th>LOGO</th>
-                    <th>COULEUR</th>
-                    <th>DIMENSION</th>
-                    <th>QTÉ</th>
-                </tr>
-            </thead>
-            <tbody id="print-tbody">
-            </tbody>
-        </table>
-    </div>
-
     <script>
         // Init Icons
         lucide.createIcons();
@@ -618,16 +446,6 @@
             }
         });
 
-        socket.on('production_archived', () => {
-            const rowsToArchive = document.querySelectorAll('.row-checked');
-            rowsToArchive.forEach(row => { row.classList.add('row-archive-anim', 'row-archived'); });
-            showToast("Production archivée avec succès !");
-            setTimeout(() => {
-                allRequests = allRequests.filter(r => r.checked === 0);
-                renderGroupedUI();
-            }, 500);
-        });
-
         socket.on('request_archived_single', (id) => {
             const row = document.getElementById(`row-${id}`);
             if (row) { row.classList.add('row-archive-anim', 'row-archived'); }
@@ -661,11 +479,9 @@
             l.setAttribute('aria-selected', String(groupMode === 'logo'));
         }
 
-        // Re-render en conservant le filtre de recherche actif
+        // Re-render selon le mode de regroupement actif
         function applyCurrentView() {
-            const q = (document.getElementById('search-input')?.value || '').trim();
-            if (q) filterRequests();
-            else renderGroupedUI();
+            renderGroupedUI();
         }
 
         function sumQty(arr) {
@@ -881,12 +697,6 @@
             socket.emit('toggle_check', { id: id, checked: isChecked });
         }
 
-        function archiveProduction() {
-            if(confirm("Confirmez-vous l'archivage de toutes les lignes cochées ?")) {
-                socket.emit('archive_production');
-            }
-        }
-
         function archiveSingle(id) {
             if(confirm("Archiver cette ligne ?")) {
                 socket.emit('archive_single', id);
@@ -911,64 +721,6 @@
                 quantite: req.quantite
             });
         }
-
-        function filterRequests() {
-            const query = document.getElementById('search-input').value.toLowerCase();
-            const filtered = allRequests.filter(req => {
-                return req.client.toLowerCase().includes(query) || 
-                       req.logo.toLowerCase().includes(query) || 
-                       req.commande.toLowerCase().includes(query);
-            });
-            renderGroupedUI(filtered);
-        }
-
-        function preparePrint() { socket.emit('get_print_data'); }
-
-        socket.on('print_data_ready', (rows) => {
-            const printTbody = document.getElementById('print-tbody');
-            const printMode = document.getElementById('print-mode');
-            printTbody.innerHTML = '';
-
-            const lineHTML = (req) => `
-                        <tr>
-                            <td>${escapeHTML(req.client)}</td>
-                            <td>${escapeHTML(req.commande)}</td>
-                            <td>${escapeHTML(req.logo)}</td>
-                            <td>${escapeHTML(req.couleur).toUpperCase()}</td>
-                            <td>${escapeHTML(req.dimension)} MM</td>
-                            <td><b>${req.quantite}</b></td>
-                        </tr>`;
-
-            if (!rows || rows.length === 0) {
-                if (printMode) printMode.textContent = '';
-                printTbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 20px;">Aucune demande cochée à imprimer.</td></tr>`;
-            } else if (groupMode === 'logo') {
-                if (printMode) printMode.textContent = 'Classé par logo';
-                // Grouper les lignes à produire par logo, plus gros lot d'abord
-                const groups = {};
-                const order = [];
-                rows.forEach(r => {
-                    const k = (r.logo && r.logo.trim()) ? r.logo.trim() : 'Sans logo';
-                    if (!groups[k]) { groups[k] = []; order.push(k); }
-                    groups[k].push(r);
-                });
-                const keys = order.slice().sort((a, b) => sumQty(groups[b]) - sumQty(groups[a]) || a.localeCompare(b));
-                let grand = 0;
-                keys.forEach(k => {
-                    const g = groups[k];
-                    const tot = sumQty(g);
-                    grand += tot;
-                    printTbody.innerHTML += `<tr><td colspan="5" style="padding-top:16px; font-weight:800; text-transform:uppercase; letter-spacing:.04em;">${escapeHTML(k)}</td><td style="padding-top:16px; font-weight:800;">${tot} pcs</td></tr>`;
-                    g.forEach(req => { printTbody.innerHTML += lineHTML(req); });
-                });
-                printTbody.innerHTML += `<tr><td colspan="5" style="text-align:right; padding-top:16px; font-weight:800; border-top:2px solid #000;">TOTAL À PRODUIRE</td><td style="padding-top:16px; font-weight:800; border-top:2px solid #000;">${grand} pcs</td></tr>`;
-            } else {
-                if (printMode) printMode.textContent = 'Classé par date';
-                rows.forEach(req => { printTbody.innerHTML += lineHTML(req); });
-            }
-            document.getElementById('print-date').innerText = new Date().toLocaleString();
-            setTimeout(() => { window.print(); }, 100);
-        });
 
         // ====== NOUVELLE MODALE BULLE ======
         const modalBackdrop = document.getElementById('modal-backdrop');
@@ -1147,318 +899,6 @@
             if (isCustom) custom.focus();
         }
 
-        // ================================================
-        //  ARCHIVES
-        // ================================================
-        let archivedList = [];
-
-        function openArchivesModal() {
-            const bd = document.getElementById('archives-backdrop');
-            const md = document.getElementById('archives-modal');
-            bd.classList.remove('pointer-events-none');
-            bd.style.opacity = '1';
-            md.style.opacity = '1';
-            md.style.transform = 'scale(1)';
-            socket.emit('get_archived_requests');
-            document.getElementById('archives-list').innerHTML = '<div class="p-8 text-center text-gray-400 font-medium">Chargement…</div>';
-        }
-        function closeArchivesModal() {
-            const bd = document.getElementById('archives-backdrop');
-            const md = document.getElementById('archives-modal');
-            bd.classList.add('pointer-events-none');
-            bd.style.opacity = '0';
-            md.style.opacity = '0';
-            md.style.transform = 'scale(0.95)';
-        }
-
-        function renderArchives() {
-            const list = document.getElementById('archives-list');
-            const lbl = document.getElementById('archives-count-label');
-            lbl.textContent = archivedList.length === 0
-                ? 'Aucune ligne archivée.'
-                : `${archivedList.length} ligne${archivedList.length > 1 ? 's' : ''} archivée${archivedList.length > 1 ? 's' : ''}.`;
-
-            if (archivedList.length === 0) {
-                list.innerHTML = '<div class="p-10 text-center text-gray-400 font-medium">Aucune archive.</div>';
-                return;
-            }
-
-            // Grouper par date
-            const groups = {};
-            archivedList.forEach(r => {
-                const g = getGroupName(r.created_at);
-                if (!groups[g]) groups[g] = [];
-                groups[g].push(r);
-            });
-
-            let html = '';
-            for (const [gname, reqs] of Object.entries(groups)) {
-                html += `<div class="mb-3"><div class="text-[11px] font-bold text-gray-400 uppercase tracking-widest px-2 mb-2 mt-2">${gname} · ${reqs.length}</div>`;
-                reqs.forEach(r => {
-                    const dot = getColorHTML(r.couleur);
-                    html += `
-                    <div class="grid grid-cols-[1.2fr_1.4fr_1fr_1.2fr_0.8fr_0.5fr_auto] gap-3 items-center p-3 rounded-xl border border-gray-100 bg-gray-50/40 hover:bg-gray-50 mb-1.5">
-                        <div class="font-bold text-brandDarkBlue text-[14px]">${escapeHTML(r.client)}</div>
-                        <div class="text-gray-600 text-[13px] font-semibold">${escapeHTML(r.commande)}</div>
-                        <div class="text-ink font-bold text-[13px]">${escapeHTML(r.logo)}</div>
-                        <div>${dot}</div>
-                        <div class="text-center text-[12px] font-bold text-muted">${escapeHTML(r.dimension)} mm</div>
-                        <div class="text-center"><span class="bg-ink text-white text-[11px] font-bold px-2 py-1 rounded">×${r.quantite}</span></div>
-                        <div class="flex gap-1">
-                            <button onclick="restoreArchived(${r.id})" title="Restaurer" class="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg"><i data-lucide="undo-2" class="w-4 h-4"></i></button>
-                            <button onclick="deleteArchived(${r.id})" title="Supprimer définitivement" class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                        </div>
-                    </div>`;
-                });
-                html += '</div>';
-            }
-            list.innerHTML = html;
-            lucide.createIcons();
-        }
-
-        function restoreArchived(id) {
-            socket.emit('restore_request', id);
-        }
-        function deleteArchived(id) {
-            if (!confirm('Supprimer définitivement cette ligne archivée ?')) return;
-            socket.emit('delete_archived', id);
-        }
-
-        socket.on('archived_requests', (rows) => {
-            archivedList = rows || [];
-            renderArchives();
-        });
-        socket.on('request_restored', (req) => {
-            archivedList = archivedList.filter(r => r.id !== req.id);
-            renderArchives();
-            allRequests.unshift(req);
-            renderGroupedUI();
-            showToast('Ligne restaurée dans la production.');
-        });
-        socket.on('archived_deleted', (id) => {
-            archivedList = archivedList.filter(r => r.id !== id);
-            renderArchives();
-            showToast('Ligne supprimée définitivement.');
-        });
-
-        // ================================================
-        //  MAQUETTES
-        // ================================================
-        let maquettesList = [];
-        let pendingMaquetteFile = null;
-
-        function openMaquetteModal() {
-            const bd = document.getElementById('maquette-backdrop');
-            const md = document.getElementById('maquette-modal');
-            bd.classList.remove('pointer-events-none');
-            bd.style.opacity = '1';
-            md.style.opacity = '1';
-            md.style.transform = 'scale(1)';
-            document.getElementById('mq_client').value = '';
-            document.getElementById('mq_description').value = '';
-            document.getElementById('mq_file_input').value = '';
-            document.getElementById('mq_file_name').classList.add('hidden');
-            pendingMaquetteFile = null;
-            lucide.createIcons();
-        }
-        function closeMaquetteModal() {
-            const bd = document.getElementById('maquette-backdrop');
-            const md = document.getElementById('maquette-modal');
-            bd.classList.add('pointer-events-none');
-            bd.style.opacity = '0';
-            md.style.opacity = '0';
-            md.style.transform = 'scale(0.95)';
-        }
-
-        document.getElementById('mq_file_input').addEventListener('change', (e) => {
-            const f = e.target.files[0];
-            if (!f) return;
-            pendingMaquetteFile = f;
-            const nameEl = document.getElementById('mq_file_name');
-            nameEl.textContent = `✓ ${f.name} (${(f.size/1024).toFixed(1)} Ko)`;
-            nameEl.classList.remove('hidden');
-        });
-
-        const dz = document.getElementById('mq_dropzone');
-        dz.addEventListener('dragover', (e) => { e.preventDefault(); dz.classList.add('drag-over'); });
-        dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
-        dz.addEventListener('drop', (e) => {
-            e.preventDefault(); dz.classList.remove('drag-over');
-            const f = e.dataTransfer.files[0];
-            if (!f) return;
-            const input = document.getElementById('mq_file_input');
-            const dt = new DataTransfer();
-            dt.items.add(f);
-            input.files = dt.files;
-            input.dispatchEvent(new Event('change'));
-        });
-
-        async function submitMaquette() {
-            if (!pendingMaquetteFile) { alert('Veuillez choisir un fichier.'); return; }
-            const btn = document.getElementById('mq_submit');
-            const txt = document.getElementById('mq_submit_text');
-            btn.disabled = true;
-            txt.textContent = 'Analyse en cours…';
-
-            const fd = new FormData();
-            fd.append('file', pendingMaquetteFile);
-            fd.append('client', document.getElementById('mq_client').value || '');
-            fd.append('description', document.getElementById('mq_description').value || '');
-            try {
-                const res = await fetch('/api/maquettes', { method: 'POST', body: fd });
-                if (!res.ok) throw new Error('Upload échoué');
-                await res.json();
-                btn.disabled = false;
-                txt.textContent = 'Analyser le fichier';
-                closeMaquetteModal();
-                showToast('Maquette analysée ✓');
-                openMaquetteListModal();
-            } catch (e) {
-                btn.disabled = false;
-                txt.textContent = 'Analyser le fichier';
-                alert('Erreur: ' + e.message);
-            }
-        }
-
-        function openMaquetteListModal() {
-            const bd = document.getElementById('mq-list-backdrop');
-            const md = document.getElementById('mq-list-modal');
-            bd.classList.remove('pointer-events-none');
-            bd.style.opacity = '1';
-            md.style.opacity = '1';
-            md.style.transform = 'scale(1)';
-            renderMaquettesList();
-        }
-        function closeMaquetteListModal() {
-            const bd = document.getElementById('mq-list-backdrop');
-            const md = document.getElementById('mq-list-modal');
-            bd.classList.add('pointer-events-none');
-            bd.style.opacity = '0';
-            md.style.opacity = '0';
-            md.style.transform = 'scale(0.95)';
-        }
-
-        function updateMaquetteCountBadge() {
-            const b = document.getElementById('maquette-count-badge');
-            if (!b) return;
-            if (maquettesList.length === 0) b.classList.add('hidden');
-            else { b.classList.remove('hidden'); b.textContent = maquettesList.length; }
-        }
-
-        function scoreBadge(score) {
-            const cls = score >= 8 ? 'score-good' : score >= 5 ? 'score-mid' : 'score-bad';
-            return `<div class="score-ring ${cls}">${score}/10</div>`;
-        }
-        function crit(label, okKey) {
-            let cls = 'criterion';
-            if (okKey === true) cls += ' criterion-ok';
-            else if (okKey === false) cls += ' criterion-ko';
-            else cls += ' criterion-na';
-            return `<div class="${cls}">${label}</div>`;
-        }
-
-        function renderMaquettesList() {
-            const wrap = document.getElementById('mq-list-container');
-            const lbl = document.getElementById('mq-list-count-label');
-            lbl.textContent = maquettesList.length === 0
-                ? 'Aucune demande de maquette pour le moment.'
-                : `${maquettesList.length} demande${maquettesList.length > 1 ? 's' : ''} en cours.`;
-
-            if (maquettesList.length === 0) {
-                wrap.innerHTML = '<div class="p-10 text-center text-gray-400 font-medium">Aucune maquette — cliquez sur "Nouvelle" pour en créer.</div>';
-                return;
-            }
-
-            wrap.innerHTML = maquettesList.map(m => {
-                const a = m.analysis || {};
-                const score = a.score_global || 0;
-                const isImage = (m.mime_type || '').startsWith('image/') && !m.mime_type.includes('svg');
-                const previewImg = (isImage || m.mime_type === 'image/svg+xml')
-                    ? `<img src="/api/maquettes/${m.id}/preview" class="w-full h-full object-contain bg-gray-50" alt="aperçu">`
-                    : `<div class="w-full h-full flex items-center justify-center bg-gray-50 text-gray-400"><i data-lucide="file" class="w-12 h-12"></i></div>`;
-
-                return `
-                <div class="border border-gray-200 rounded-2xl p-5 bg-white">
-                    <div class="grid grid-cols-1 lg:grid-cols-[160px_1fr_auto] gap-5 items-start">
-                        <div class="w-[160px] h-[160px] rounded-xl overflow-hidden border border-gray-100">${previewImg}</div>
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-2 mb-1 flex-wrap">
-                                <h4 class="font-black text-[17px] text-brandDarkBlue">${escapeHTML(m.client || 'Sans client')}</h4>
-                                <span class="text-[11px] font-bold text-gray-400 uppercase tracking-widest">${escapeHTML(m.original_name || '')}</span>
-                                ${a.vectoriel ? '<span class="bg-green-100 text-green-700 text-[10px] font-black px-2 py-0.5 rounded">VECTORIEL</span>' : ''}
-                            </div>
-                            ${m.description ? `<p class="text-sm text-gray-500 mb-3">${escapeHTML(m.description)}</p>` : ''}
-                            <p class="text-[14px] font-semibold text-gray-800 mb-3">${escapeHTML(a.verdict_vendeuse || '—')}</p>
-                            <div class="flex flex-wrap gap-1.5 mb-3">
-                                ${crit(`${a.format || '?'}`, true)}
-                                ${a.dimensions ? crit(a.dimensions + ' px', a.resolution_suffisante) : crit('vectoriel', true)}
-                                ${crit((a.poids || 0) + ' Ko', true)}
-                                ${a.fond_transparent === true ? crit('fond transparent', true) : a.fond_transparent === false ? crit('fond opaque', false) : crit('fond N/A', null)}
-                                ${a.fond_parasite ? crit('fond parasite', false) : ''}
-                                ${a.nettete ? crit('netteté: ' + a.nettete, a.nettete === 'nette') : ''}
-                                ${a.artefacts_compression ? crit('artefacts JPEG', false) : ''}
-                                ${a.complexite ? crit('complexité: ' + a.complexite, null) : ''}
-                                ${a.nombre_couleurs_estime ? crit(a.nombre_couleurs_estime + ' couleurs', null) : ''}
-                                ${crit('impression ' + (a.utilisable_impression ? 'OK' : 'KO'), a.utilisable_impression)}
-                                ${crit('web ' + (a.utilisable_web ? 'OK' : 'KO'), a.utilisable_web)}
-                            </div>
-                            ${a.action_suggeree_client ? `
-                                <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-2">
-                                    <div class="flex items-start gap-2 mb-1">
-                                        <i data-lucide="mail" class="w-4 h-4 text-amber-600 mt-0.5"></i>
-                                        <div class="text-[11px] font-bold text-amber-700 uppercase tracking-wider">Message à copier pour le client</div>
-                                    </div>
-                                    <p class="text-[13px] text-gray-800 mb-2">${escapeHTML(a.action_suggeree_client)}</p>
-                                    <button onclick="copyToClipboard(this, ${JSON.stringify(a.action_suggeree_client).replace(/"/g,'&quot;')})" class="text-xs font-bold text-amber-700 hover:text-amber-900 flex items-center gap-1"><i data-lucide="copy" class="w-3 h-3"></i> Copier</button>
-                                </div>` : ''}
-                            ${a.note_interne_graphiste ? `
-                                <div class="bg-gray-50 border border-gray-200 rounded-lg p-2.5">
-                                    <div class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Note interne graphiste</div>
-                                    <p class="text-[12px] text-gray-700 font-mono">${escapeHTML(a.note_interne_graphiste)}</p>
-                                </div>` : ''}
-                        </div>
-                        <div class="flex flex-col items-center gap-3">
-                            ${scoreBadge(score)}
-                            <a href="/api/maquettes/${m.id}/file" class="bg-brandDarkBlue text-white text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-1 hover:bg-duckFocus transition-colors" title="Télécharger le fichier original (taille d'origine)">
-                                <i data-lucide="download" class="w-3.5 h-3.5"></i> Original
-                            </a>
-                            <button onclick="deleteMaquette(${m.id})" class="text-gray-400 hover:text-red-500 text-xs font-semibold flex items-center gap-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Supprimer</button>
-                        </div>
-                    </div>
-                </div>`;
-            }).join('');
-            lucide.createIcons();
-        }
-
-        function copyToClipboard(btn, text) {
-            navigator.clipboard.writeText(text).then(() => {
-                const orig = btn.innerHTML;
-                btn.innerHTML = '<i data-lucide="check" class="w-3 h-3"></i> Copié !';
-                lucide.createIcons();
-                setTimeout(() => { btn.innerHTML = orig; lucide.createIcons(); }, 1500);
-            });
-        }
-        function deleteMaquette(id) {
-            if (!confirm('Supprimer cette demande de maquette ?')) return;
-            socket.emit('delete_maquette', id);
-        }
-
-        socket.on('load_maquettes', (rows) => {
-            maquettesList = rows || [];
-            updateMaquetteCountBadge();
-            renderMaquettesList();
-        });
-        socket.on('maquette_added', (m) => {
-            maquettesList.unshift(m);
-            updateMaquetteCountBadge();
-            renderMaquettesList();
-        });
-        socket.on('maquette_deleted', (id) => {
-            maquettesList = maquettesList.filter(m => m.id !== id);
-            updateMaquetteCountBadge();
-            renderMaquettesList();
-            showToast('Maquette supprimée.');
-        });
 
         let toastTimeout;
         function showToast(msg) {
