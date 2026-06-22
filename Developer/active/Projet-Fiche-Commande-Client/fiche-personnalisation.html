@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Fiche de personnalisation — EMPREINTE</title>
+<style>
+  :root{
+    --duck:#4A6274; --duck-focus:#6B8191; --sage:#8BA0AF;
+    --ink:#202930; --muted:#5b6b78; --muted-2:#7a8893;
+    --card:rgba(245,247,248,0.72); --card-border:rgba(255,255,255,0.55);
+    --field-border:rgba(74,98,116,0.14); --hairline:rgba(74,98,116,0.10);
+    --rail:rgba(74,98,116,0.08);
+    --green:#2f8f5b; --red:#c0494a;
+    --shadow:0 1px 3px rgba(32,41,48,.06),0 14px 36px rgba(74,98,116,.12);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; color:var(--ink);
+    font-variant-numeric:tabular-nums;
+    background:linear-gradient(140deg,#EBEAE8,#CDD4CD 50%,#ADB8B9);
+    background-attachment:fixed; min-height:100vh; min-height:100dvh;
+    display:flex; justify-content:center;
+    padding:calc(44px + env(safe-area-inset-top)) calc(24px + env(safe-area-inset-right)) calc(90px + env(safe-area-inset-bottom)) calc(24px + env(safe-area-inset-left));
+  }
+  input,textarea,button{font-family:inherit}
+  input::placeholder,textarea::placeholder{color:#bcc6cc;opacity:1}
+  input:focus,textarea:focus{outline:none}
+  input[type=date]{-webkit-appearance:none;appearance:none}
+  button{-webkit-tap-highlight-color:transparent}
+
+  .sheet{
+    width:100%; max-width:720px; background:var(--card);
+    backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%);
+    border:1px solid var(--card-border); border-radius:16px; box-shadow:var(--shadow); overflow:hidden;
+    transition:background .25s ease, border-color .25s ease, box-shadow .25s ease;
+  }
+  .sheet.is-paid{
+    background:rgba(234,247,239,0.74); border-color:rgba(47,143,91,0.45);
+    box-shadow:0 1px 3px rgba(32,41,48,.06),0 16px 42px rgba(47,143,91,.22);
+  }
+  .sheet.is-unpaid{
+    background:rgba(250,236,236,0.74); border-color:rgba(192,73,74,0.45);
+    box-shadow:0 1px 3px rgba(32,41,48,.06),0 16px 42px rgba(192,73,74,.22);
+  }
+  .block{padding:24px 28px; border-bottom:1px solid var(--hairline)}
+  .block:last-child{border-bottom:none}
+
+  .head{display:flex; justify-content:space-between; align-items:flex-end; gap:18px; padding:26px 28px; border-bottom:1px solid var(--hairline)}
+  .eyebrow{font-weight:600; font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--duck)}
+  .title{font-weight:800; font-size:27px; line-height:1.1; letter-spacing:-.02em; margin-top:9px}
+  .sub{font-weight:500; font-size:12px; line-height:1.5; color:var(--muted-2); text-align:right; flex-shrink:0}
+
+  .label{font-weight:600; font-size:11px; letter-spacing:.10em; text-transform:uppercase; color:var(--muted-2)}
+  .field{display:flex; flex-direction:column; gap:8px}
+  .fld{
+    height:46px; background:#fff; border:1px solid var(--field-border); border-radius:10px;
+    padding:0 13px; font-weight:600; font-size:16px; color:var(--ink); width:100%;
+  }
+  .fld:focus{border-color:var(--duck-focus); box-shadow:0 0 0 3px rgba(107,129,145,0.20)}
+  textarea.fld{height:auto; padding:12px 13px; font-size:16px; line-height:1.5; resize:none}
+  .num{text-align:right; font-variant-numeric:tabular-nums}
+
+  .grid-client{display:grid; grid-template-columns:2fr 1fr 1fr; gap:18px}
+  .grid-spec{display:grid; grid-template-columns:1fr 1fr; gap:18px 20px}
+  .stack{display:flex; flex-direction:column; gap:20px}
+
+  /* Segmented control */
+  .seg{display:flex; gap:4px; background:var(--rail); padding:4px; border-radius:14px}
+  .seg button{
+    flex:1; height:48px; border:none; border-radius:11px; background:transparent; color:var(--muted);
+    font-weight:600; font-size:14px; cursor:pointer; transition:.18s;
+  }
+  .seg.small button{height:44px; border-radius:10px; font-size:14px}
+  .seg button[aria-pressed="true"]{background:var(--duck); color:#fff}
+  button:active{transform:scale(.97)}
+
+  /* Quantité + prix */
+  .row-end{display:flex; gap:22px; align-items:flex-end; flex-wrap:wrap}
+  .price{display:flex; align-items:center; height:46px; background:#fff; border:1px solid var(--field-border); border-radius:10px; padding:0 13px}
+  .price:focus-within{border-color:var(--duck-focus); box-shadow:0 0 0 3px rgba(107,129,145,0.20)}
+  .price input{border:none; background:transparent; font-weight:600; font-size:16px; color:var(--ink); width:100%; text-align:right; font-variant-numeric:tabular-nums}
+  .price span{font-weight:600; font-size:14px; color:var(--muted-2); margin-left:6px}
+
+  /* Croquis */
+  .sketch-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:11px; gap:10px; flex-wrap:wrap}
+  .sketch-colors{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px}
+  .swatch{position:relative; width:44px; height:44px; padding:0; border:none; background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; border-radius:50%}
+  .swatch::before{content:""; width:26px; height:26px; border-radius:50%; background:var(--sw); box-shadow:inset 0 0 0 1px rgba(32,41,48,.14)}
+  .swatch[aria-pressed="true"]::after, .swatch-custom.active::after{content:""; position:absolute; width:40px; height:40px; border-radius:50%; border:2px solid var(--duck)}
+  .swatch-custom::before{background:conic-gradient(#f43f5e,#f59e0b,#facc15,#22c55e,#06b6d4,#3b82f6,#a855f7,#f43f5e)}
+  .swatch-custom input{position:absolute; inset:0; width:100%; height:100%; opacity:0; border:none; padding:0; margin:0; cursor:pointer}
+  canvas#sketch{width:100%; aspect-ratio:1200/620; height:auto; border:1px solid var(--field-border); border-radius:12px; background:#fff; touch-action:none; display:block}
+  .link{border:none; background:transparent; font-weight:600; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted-2); cursor:pointer; min-height:44px; padding:0 6px}
+  .link-group{display:flex; gap:4px}
+
+  /* Totals */
+  .tot-row{display:flex; justify-content:space-between; align-items:center; padding:7px 0; font-weight:500; font-size:14px; color:var(--muted)}
+  .tot-row b{color:var(--ink); font-weight:700; font-variant-numeric:tabular-nums}
+  .tot-total{display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(74,98,116,0.12); margin-top:8px; padding-top:14px}
+  .tot-total .k{font-weight:600; font-size:11px; letter-spacing:.10em; text-transform:uppercase; color:var(--muted-2)}
+  .tot-total .v{font-weight:800; font-size:24px; letter-spacing:-.01em; font-variant-numeric:tabular-nums}
+
+  /* Paiement */
+  #payTabs button[data-pay="1"][aria-pressed="true"]{background:var(--green); color:#fff}
+  #payTabs button[data-pay="0"][aria-pressed="true"]{background:var(--red); color:#fff}
+
+  /* Actions */
+  .actions{display:flex; gap:12px; flex-wrap:wrap}
+  .btn{height:52px; border-radius:12px; font-weight:600; font-size:14px; cursor:pointer; border:none}
+  .btn-primary{flex:2; min-width:160px; background:var(--duck); color:#fff; letter-spacing:.02em}
+  .btn-ghost{flex:1; min-width:130px; background:transparent; color:var(--duck); border:1px solid rgba(74,98,116,0.22)}
+  .btn-quiet{padding:0 18px; min-height:52px; background:transparent; color:var(--muted-2)}
+
+  /* Toast */
+  #toast{position:fixed; bottom:calc(26px + env(safe-area-inset-bottom)); left:50%; transform:translateX(-50%); display:none; align-items:center; gap:9px;
+    background:var(--ink); color:#EBEAE8; padding:13px 22px; border-radius:980px; font-weight:600; font-size:13px;
+    box-shadow:0 14px 40px rgba(32,41,48,.32); z-index:60}
+  #toast.show{display:flex}
+
+  @media (max-width:560px){
+    .grid-client{grid-template-columns:1fr 1fr; gap:14px 16px}
+    .grid-client .field:first-child{grid-column:1 / -1}
+    .grid-spec{grid-template-columns:1fr}
+    .head{padding:22px 20px}
+    .block{padding:20px 20px}
+    .title{font-size:24px}
+  }
+
+  @media print{
+    .no-print{display:none!important}
+    body{background:#fff!important; padding:0; display:block}
+    .sheet{
+      box-shadow:none; backdrop-filter:none; -webkit-backdrop-filter:none; max-width:none; border:1px solid #ccc;
+      -webkit-print-color-adjust:exact; print-color-adjust:exact;
+    }
+  }
+  @page{margin:14mm}
+</style>
+</head>
+<body>
+  <div class="sheet" id="sheet">
+    <div class="head">
+      <div>
+        <div class="eyebrow">Empreinte</div>
+        <div class="title">Fiche de personnalisation</div>
+      </div>
+      <div class="sub">Atelier de marquage<br>&amp; gravure</div>
+    </div>
+
+    <!-- Client -->
+    <div class="block grid-client">
+      <div class="field"><label class="label" for="nom">Nom du client</label><input class="fld" id="nom" placeholder="Prénom Nom" autocomplete="name" /></div>
+      <div class="field"><label class="label" for="date">Date</label><input class="fld" type="date" id="date" /></div>
+      <div class="field"><label class="label" for="tel">Téléphone</label><input class="fld num" id="tel" inputmode="tel" autocomplete="tel" placeholder="06 00 00 00 00" /></div>
+    </div>
+
+    <!-- Personnalisation -->
+    <div class="block stack">
+      <div class="seg" id="typeTabs" role="group" aria-label="Type de produit">
+        <button type="button" data-type="produit" aria-pressed="true">Produit</button>
+        <button type="button" data-type="tshirt" aria-pressed="false">T-Shirt</button>
+        <button type="button" data-type="tasse" aria-pressed="false">Tasse</button>
+      </div>
+
+      <div class="grid-spec" id="specGrid"><!-- champs injectés selon le produit --></div>
+
+      <div id="sizeWrap" style="display:none">
+        <label class="label" style="display:block;margin-bottom:10px">Taille</label>
+        <div class="seg small" id="sizeTabs" role="group" aria-label="Taille"></div>
+      </div>
+
+      <div class="row-end">
+        <div class="field" style="width:130px">
+          <label class="label" for="qty">Quantité</label>
+          <input class="fld num" id="qty" inputmode="numeric" value="1" />
+        </div>
+        <div class="field" style="flex:1;min-width:160px">
+          <label class="label" for="unitPrice">Prix unitaire</label>
+          <div class="price"><input id="unitPrice" inputmode="decimal" placeholder="0,00" /><span>€</span></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label" for="comment">Commentaire</label>
+        <textarea class="fld" id="comment" rows="2" placeholder="Précisions, dimensions, délai souhaité…"></textarea>
+      </div>
+    </div>
+
+    <!-- Croquis du projet (produit uniquement) -->
+    <div class="block" id="sketchBlock">
+      <div class="sketch-head">
+        <label class="label">Croquis du projet</label>
+        <div class="link-group no-print">
+          <button type="button" class="link" id="undoSketch">Annuler</button>
+          <button type="button" class="link" id="clearSketch">Effacer</button>
+        </div>
+      </div>
+      <div class="sketch-colors no-print" id="sketchColors" role="group" aria-label="Couleur du dessin">
+        <button type="button" class="swatch" data-color="#202930" aria-pressed="true" aria-label="Noir" title="Noir" style="--sw:#202930"></button>
+        <button type="button" class="swatch" data-color="#c0494a" aria-pressed="false" aria-label="Rouge" title="Rouge" style="--sw:#c0494a"></button>
+        <button type="button" class="swatch" data-color="#d98324" aria-pressed="false" aria-label="Orange" title="Orange" style="--sw:#d98324"></button>
+        <button type="button" class="swatch" data-color="#e6b400" aria-pressed="false" aria-label="Jaune" title="Jaune" style="--sw:#e6b400"></button>
+        <button type="button" class="swatch" data-color="#2f8f5b" aria-pressed="false" aria-label="Vert" title="Vert" style="--sw:#2f8f5b"></button>
+        <button type="button" class="swatch" data-color="#2b6cb0" aria-pressed="false" aria-label="Bleu" title="Bleu" style="--sw:#2b6cb0"></button>
+        <button type="button" class="swatch" data-color="#7c4dff" aria-pressed="false" aria-label="Violet" title="Violet" style="--sw:#7c4dff"></button>
+        <label class="swatch swatch-custom" title="Couleur personnalisée" aria-label="Couleur personnalisée">
+          <input type="color" id="sketchColorInput" value="#202930" />
+        </label>
+      </div>
+      <canvas id="sketch" width="1200" height="620"></canvas>
+    </div>
+
+    <!-- Tarification -->
+    <div class="block">
+      <div class="tot-row"><span>Sous-total (qté × prix)</span><b id="lineFmt">0,00 €</b></div>
+      <div class="tot-total"><span class="k">Total</span><span class="v" id="totalFmt">0,00 €</span></div>
+      <div style="margin-top:18px">
+        <label class="label" style="display:block;margin-bottom:10px">Paiement</label>
+        <div class="seg" id="payTabs" role="group" aria-label="Statut de paiement">
+          <button type="button" data-pay="1" aria-pressed="false">Payé</button>
+          <button type="button" data-pay="0" aria-pressed="true">Non payé</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="block no-print">
+      <div class="actions">
+        <button type="button" class="btn btn-primary" id="save">Enregistrer la fiche</button>
+        <button type="button" class="btn btn-ghost" id="print">Imprimer · PDF</button>
+        <button type="button" class="btn btn-quiet" id="reset">Réinitialiser</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#76d3a3" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Fiche enregistrée sur l'appareil</div>
+
+<script>
+(function(){
+  "use strict";
+  var STORAGE_KEY = "fiche-personnalisation";
+
+  // Champs par produit. Chaque champ est une liste ouverte : suggestions + saisie libre.
+  var FIELDS = {
+    produit: [
+      {key:"produit", label:"Produit", ph:"Trophée, magnet, porte-clés…"},
+      {key:"matiere", label:"Matière", ph:"Acrylique transparent 5 mm…"},
+      {key:"couleur", label:"Couleur", ph:"Blanc, noir, naturel…"},
+      {key:"logo", label:"Logo / emplacement", ph:"Recto, centre…"}
+    ],
+    tshirt: [
+      {key:"modele", label:"Modèle de t-shirt", ph:"Col rond, premium…"},
+      {key:"couleurT", label:"Couleur du t-shirt", ph:"Blanc, noir…"},
+      {key:"flex", label:"Couleur flex / flocage", ph:"Or, blanc, marine…"},
+      {key:"logoDevant", label:"Logo — devant", ph:"Poitrine gauche…"},
+      {key:"logoDos", label:"Logo — dos", ph:"Centre du dos…"}
+    ],
+    tasse: [
+      {key:"logo1", label:"Logo 1", ph:"Face avant…"},
+      {key:"logo2", label:"Logo 2", ph:"Face arrière…"},
+      {key:"logo3", label:"Logo 3", ph:"Anse / dessous…"}
+    ]
+  };
+
+  // Suggestions de départ. Tout ce que la vendeuse tape en plus est mémorisé (customPresets).
+  var PRESETS = {
+    produit:["Trophée","Magnet","Porte-clés","Mug","Casquette","Sac","Verre","Gourde"],
+    matiere:["Acrylique blanc","Acrylique noir","Acrylique transparent","3 mm","5 mm","10 mm","Bois","Métal","Céramique","Coton"],
+    couleur:["Blanc","Noir","Naturel","Transparent","Or","Argent"],
+    logo:[],
+    modele:["Col rond","Premium","Oversize","Manches longues"],
+    couleurT:["Blanc","Noir","Marine","Gris chiné","Rouge","Vert bouteille"],
+    flex:["Or","Argent","Blanc","Noir","Marine","Rouge"],
+    logoDevant:[],
+    logoDos:[],
+    logo1:[], logo2:[], logo3:[]
+  };
+  var SIZES = ["XS","S","M","L","XL","XXL"];
+
+  function freshState(){
+    return {
+      productType:"produit",
+      client:{ nom:"", date:new Date().toISOString().slice(0,10), tel:"" },
+      specs:{}, taille:"M", qty:"1", unitPrice:"", comment:"",
+      paye:false, sketch:null, penColor:"#202930", customPresets:{}
+    };
+  }
+
+  var state = freshState();
+  try { var saved = JSON.parse(localStorage.getItem(STORAGE_KEY)); if(saved) Object.assign(state, saved); } catch(e){}
+  if(!state.client) state.client = freshState().client;
+  if(!state.specs) state.specs = {};
+  if(!state.customPresets) state.customPresets = {};
+  if(!state.penColor) state.penColor = "#202930";
+
+  var $ = function(id){ return document.getElementById(id); };
+  function eur(n){ n = Number(n)||0; return n.toLocaleString("fr-FR",{minimumFractionDigits:2,maximumFractionDigits:2})+" €"; }
+  function parseNum(v){ return parseFloat(String(v).replace(",","."))||0; }
+  function persist(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){} }
+
+  // --- Totals ---
+  function recompute(){
+    var total = parseNum(state.unitPrice) * (parseInt(state.qty,10)||0);
+    $("lineFmt").textContent = eur(total);
+    $("totalFmt").textContent = eur(total);
+  }
+
+  // --- Listes ouvertes (presets + ajouts mémorisés) ---
+  function presetsFor(key){
+    var base = PRESETS[key] || [];
+    var cust = state.customPresets[key] || [];
+    var seen = {}, out = [];
+    base.concat(cust).forEach(function(v){ var k = String(v).toLowerCase(); if(v && !seen[k]){ seen[k]=1; out.push(v); } });
+    return out;
+  }
+  function fillDatalist(dl, key){
+    dl.innerHTML = "";
+    presetsFor(key).forEach(function(v){ var o = document.createElement("option"); o.value = v; dl.appendChild(o); });
+  }
+  function addCustom(key, val){
+    val = String(val).trim(); if(!val) return;
+    var exists = presetsFor(key).some(function(v){ return v.toLowerCase() === val.toLowerCase(); });
+    if(exists) return;
+    if(!state.customPresets[key]) state.customPresets[key] = [];
+    state.customPresets[key].push(val); persist();
+  }
+
+  // --- Spec fields (dynamic per product) ---
+  function renderSpecs(){
+    var grid = $("specGrid"); grid.innerHTML = "";
+    FIELDS[state.productType].forEach(function(f){
+      var wrap = document.createElement("div"); wrap.className = "field";
+      var lab = document.createElement("label"); lab.className = "label"; lab.textContent = f.label;
+      var inp = document.createElement("input"); inp.className = "fld"; inp.placeholder = f.ph;
+      var id = "spec-" + f.key; inp.id = id; lab.setAttribute("for", id);
+      var dl = document.createElement("datalist"); dl.id = "dl-" + f.key; fillDatalist(dl, f.key);
+      inp.setAttribute("list", dl.id);
+      inp.setAttribute("autocomplete", "off");
+      inp.value = state.specs[f.key] || "";
+      inp.addEventListener("input", function(){ state.specs[f.key] = inp.value; persist(); });
+      inp.addEventListener("change", function(){ addCustom(f.key, inp.value); fillDatalist(dl, f.key); });
+      wrap.appendChild(lab); wrap.appendChild(inp); wrap.appendChild(dl); grid.appendChild(wrap);
+    });
+    $("sizeWrap").style.display = state.productType === "tshirt" ? "block" : "none";
+    $("sketchBlock").style.display = state.productType === "produit" ? "block" : "none";
+  }
+
+  // --- Sizes ---
+  function renderSizes(){
+    var c = $("sizeTabs"); c.innerHTML = "";
+    SIZES.forEach(function(z){
+      var b = document.createElement("button");
+      b.type = "button"; b.textContent = z;
+      b.setAttribute("aria-pressed", state.taille === z ? "true" : "false");
+      b.addEventListener("click", function(){ state.taille = z; persist(); renderSizes(); });
+      c.appendChild(b);
+    });
+  }
+
+  // --- Segmented: product type ---
+  $("typeTabs").addEventListener("click", function(e){
+    var b = e.target.closest("button"); if(!b) return;
+    state.productType = b.dataset.type;
+    [].forEach.call(this.children, function(x){ x.setAttribute("aria-pressed", x===b ? "true":"false"); });
+    persist(); renderSpecs();
+  });
+
+  // --- Paiement (couleur de la carte) ---
+  function applyPayStatus(){
+    var sheet = $("sheet");
+    sheet.classList.toggle("is-paid", !!state.paye);
+    sheet.classList.toggle("is-unpaid", !state.paye);
+    [].forEach.call($("payTabs").children, function(x){
+      x.setAttribute("aria-pressed", (x.dataset.pay === "1") === (!!state.paye) ? "true" : "false");
+    });
+  }
+  $("payTabs").addEventListener("click", function(e){
+    var b = e.target.closest("button"); if(!b) return;
+    state.paye = b.dataset.pay === "1";
+    persist(); applyPayStatus();
+  });
+
+  // --- Client + simple fields ---
+  function bind(id, getset){
+    var el = $(id);
+    el.addEventListener("input", function(){ getset(el.value); persist(); recompute(); });
+  }
+  bind("nom", function(v){ state.client.nom = v; });
+  bind("date", function(v){ state.client.date = v; });
+  bind("tel", function(v){ state.client.tel = v; });
+  bind("qty", function(v){ state.qty = v; });
+  bind("unitPrice", function(v){ state.unitPrice = v; });
+  bind("comment", function(v){ state.comment = v; });
+  $("qty").addEventListener("blur", function(){ var n = Math.max(0, parseInt(this.value,10)||0); state.qty = String(n); this.value = n; persist(); recompute(); });
+
+  // --- Croquis (dessin libre au crayon) ---
+  var sketch = $("sketch"), sctx = sketch.getContext("2d");
+  function sketchStyle(){ sctx.lineWidth = 4; sctx.lineCap = "round"; sctx.lineJoin = "round"; sctx.strokeStyle = state.penColor || "#202930"; }
+  sketchStyle();
+  var sdraw = false, sstart = null, undoStack = [];
+
+  function spos(ev){ var r = sketch.getBoundingClientRect(); return { x:(ev.clientX-r.left)*(sketch.width/r.width), y:(ev.clientY-r.top)*(sketch.height/r.height) }; }
+  function pushUndo(){ try{ undoStack.push(sketch.toDataURL()); if(undoStack.length > 25) undoStack.shift(); }catch(e){} }
+  sketch.addEventListener("pointerdown", function(ev){
+    ev.preventDefault(); sdraw = true; sstart = spos(ev); pushUndo();
+    sketchStyle();
+    sctx.beginPath(); sctx.moveTo(sstart.x, sstart.y);
+    try{ sketch.setPointerCapture(ev.pointerId); }catch(e){}
+  });
+  sketch.addEventListener("pointermove", function(ev){
+    if(!sdraw) return; ev.preventDefault(); var p = spos(ev);
+    sctx.lineTo(p.x, p.y); sctx.stroke();
+  });
+  function endSketch(){ if(!sdraw) return; sdraw = false; state.sketch = sketch.toDataURL(); persist(); }
+  sketch.addEventListener("pointerup", endSketch);
+  sketch.addEventListener("pointercancel", endSketch);
+  sketch.addEventListener("pointerleave", endSketch);
+
+  function loadSketch(data){
+    sctx.clearRect(0,0,sketch.width,sketch.height);
+    if(!data) return;
+    var img = new Image(); img.onload = function(){ sctx.drawImage(img,0,0,sketch.width,sketch.height); }; img.src = data;
+  }
+
+  $("undoSketch").addEventListener("click", function(){
+    if(!undoStack.length) return;
+    var data = undoStack.pop();
+    loadSketch(data);
+    state.sketch = data; persist();
+  });
+  $("clearSketch").addEventListener("click", function(){
+    pushUndo();
+    sctx.clearRect(0,0,sketch.width,sketch.height);
+    state.sketch = null; persist();
+  });
+
+  // --- Couleur du crayon ---
+  function setPenColor(color, fromInput){
+    state.penColor = color;
+    $("sketchColorInput").value = color;
+    var presets = $("sketchColors").querySelectorAll(".swatch[data-color]"), matched = false;
+    [].forEach.call(presets, function(x){
+      var on = x.dataset.color.toLowerCase() === String(color).toLowerCase();
+      x.setAttribute("aria-pressed", on ? "true":"false"); if(on) matched = true;
+    });
+    $("sketchColors").querySelector(".swatch-custom").classList.toggle("active", !matched);
+    if(!fromInput) persist();
+  }
+  $("sketchColors").addEventListener("click", function(e){
+    var b = e.target.closest(".swatch[data-color]"); if(!b) return;
+    setPenColor(b.dataset.color);
+  });
+  $("sketchColorInput").addEventListener("input", function(){ setPenColor(this.value, true); });
+  $("sketchColorInput").addEventListener("change", persist);
+
+  // --- Actions ---
+  $("save").addEventListener("click", function(){
+    persist();
+    var t = $("toast"); t.classList.add("show");
+    clearTimeout(window.__t); window.__t = setTimeout(function(){ t.classList.remove("show"); }, 2400);
+  });
+  $("print").addEventListener("click", function(){ window.print(); });
+  $("reset").addEventListener("click", function(){
+    if(!window.confirm("Réinitialiser la fiche ? Les données saisies seront effacées (les suggestions enregistrées sont conservées).")) return;
+    var keepPresets = state.customPresets;
+    state = freshState(); state.customPresets = keepPresets;
+    undoStack = [];
+    persist(); hydrate();
+  });
+
+  // --- Hydrate UI from state ---
+  function hydrate(){
+    $("nom").value = state.client.nom; $("date").value = state.client.date; $("tel").value = state.client.tel;
+    $("qty").value = state.qty; $("unitPrice").value = state.unitPrice; $("comment").value = state.comment;
+    [].forEach.call($("typeTabs").children, function(x){ x.setAttribute("aria-pressed", x.dataset.type===state.productType ? "true":"false"); });
+    renderSpecs(); renderSizes(); recompute(); applyPayStatus();
+    setPenColor(state.penColor || "#202930", true);
+    loadSketch(state.sketch);
+  }
+  hydrate();
+})();
+</script>
+</body>
+</html>
