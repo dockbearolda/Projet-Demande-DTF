@@ -1,0 +1,21 @@
+{
+  "name": "clients-api",
+  "version": "1.0.0",
+  "description": "Micro-service source de vérité de la base clients OLDA (Express + PostgreSQL natif, sans ORM).",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "test": "node --test",
+    "migrate:existant": "node scripts/migrate-existant.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "express": "^4.19.2",
+    "pg": "^8.13.1"
+  }
+}
