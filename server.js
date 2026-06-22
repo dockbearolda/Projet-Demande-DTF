@@ -357,6 +357,17 @@ io.on('connection', (socket) => {
         });
     });
 
+    // Suppression groupée (sélection multiple)
+    socket.on('delete_requests', (ids) => {
+        if (!Array.isArray(ids)) return;
+        const clean = ids.map(n => parseInt(n, 10)).filter(Number.isInteger);
+        if (clean.length === 0) return;
+        const placeholders = clean.map(() => '?').join(',');
+        db.run(`DELETE FROM requests WHERE id IN (${placeholders})`, clean, (err) => {
+            if (!err) io.emit('requests_deleted', clean);
+        });
+    });
+
     socket.on('update_request', (data) => {
         const { id, client, commande, logo, couleur, dimension, quantite } = data;
         db.run(
