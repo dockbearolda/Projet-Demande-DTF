@@ -358,13 +358,31 @@
                         <option value="FLE-PI">FLE-PI</option>
                         <option value="PAL-PI">PAL-PI</option>
                         <option value="COEUR-PI">COEUR-PI</option>
-                        <option value="BEA-16">BEA-16</option>
-                        <option value="TOR-04">TOR-04</option>
-                        <option value="SXM-20">SXM-20</option>
                         <option value="SXM-12 Poitrine">SXM-12 Poitrine</option>
+                        <option value="COC-03">COC-03</option>
+                        <option value="COC-05">COC-05</option>
+                        <option value="COR-04">COR-04</option>
+                        <option value="GOOD-01">GOOD-01</option>
+                        <option value="LAN-02">LAN-02</option>
+                        <option value="PAL-16">PAL-16</option>
+                        <option value="PAL-20">PAL-20</option>
+                        <option value="PAY-01">PAY-01</option>
+                        <option value="SLO-01">SLO-01</option>
+                        <option value="SXM-15">SXM-15</option>
+                        <option value="SXM-20">SXM-20</option>
+                        <option value="SXM-23">SXM-23</option>
+                        <option value="SXM-24">SXM-24</option>
+                        <option value="TEQ-01">TEQ-01</option>
+                        <option value="VOI-02">VOI-02</option>
+                        <option value="BEA-16 mix">BEA-16 mix</option>
+                        <option value="VIN-01 mix">VIN-01 mix</option>
+                        <option value="SXM-12 mix">SXM-12 mix</option>
+                        <option value="SUR-07 mix">SUR-07 mix</option>
+                        <option value="TOR-04 mix">TOR-04 mix</option>
                         <option value="__custom__">✏ Saisir manuellement</option>
                     </select>
                     <input type="text" id="in_logo_custom" placeholder="Saisir un logo..." class="hidden w-full mt-2 text-sm font-bold border border-gray-200 bg-gray-50/50 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brandDarkBlue focus:bg-white transition-all">
+                    <p id="logo-mix-hint" class="hidden mt-2 text-[11px] font-semibold text-brandDarkBlue flex items-center gap-1.5"><i data-lucide="palette" class="w-3.5 h-3.5"></i> Dispo en plusieurs couleurs → choisis la couleur ci-dessous.</p>
                 </div>
 
                 <!-- Ligne 2 -->
@@ -382,6 +400,7 @@
                             <option value="jaune">Jaune</option>
                             <option value="kaki">Kaki</option>
                             <option value="lavande">Lavande</option>
+                            <option value="marron">Marron</option>
                             <option value="menthe">Menthe</option>
                             <option value="multicolor">Multicolor</option>
                             <option value="noir">Noir</option>
@@ -759,6 +778,7 @@
             'jaune':       { hex: '#FFD84D', label: 'Jaune' },
             'kaki':        { hex: '#7B7B3A', label: 'Kaki' },
             'lavande':     { hex: '#B8A9D9', label: 'Lavande' },
+            'marron':      { hex: '#8B5A2B', label: 'Marron' },
             'menthe':      { hex: '#A8E6CF', label: 'Menthe' },
             'multicolor':  { hex: null,      label: 'Multicolor' },
             'multi':       { hex: null,      label: 'Multicolor' },
@@ -1040,9 +1060,25 @@
             );
         }
 
+        // Logos proposés en plusieurs couleurs (mention « mix » sur la fiche REF DTF).
+        // → affichés avec le suffixe « mix » pour rappeler à la vendeuse de choisir la couleur.
+        const MIX_LOGOS = new Set(['BEA-16', 'VIN-01', 'SXM-12', 'SUR-07', 'TOR-04']);
+
+        // Catalogue principal (fiche REF DTF) — un même visuel peut se poser avant comme arrière.
+        const LOGO_CATALOG = [
+            'COC-03', 'COC-05', 'COR-04', 'GOOD-01', 'LAN-02', 'PAL-16', 'PAL-20', 'PAY-01',
+            'SLO-01', 'SXM-15', 'SXM-20', 'SXM-23', 'SXM-24', 'TEQ-01', 'VOI-02',
+            'BEA-16', 'VIN-01', 'SXM-12', 'SUR-07', 'TOR-04'
+        ];
+
+        // Affichage d'un logo : on suffixe « mix » s'il est dispo en plusieurs couleurs.
+        function logoLabel(l) {
+            return MIX_LOGOS.has(l) ? `${l} mix` : l;
+        }
+
         const LOGO_PRESETS = {
-            avant:   ['FLE-PI', 'PAL-PI', 'COEUR-PI', 'BEA-16', 'TOR-04', 'SXM-20', 'SXM-12 Poitrine'],
-            arriere: ['VIN-01', 'CRAB-01', 'SUR-07', 'WRA-01', 'BEA-16', 'TOR-04', 'SXM-20', 'SXM-12']
+            avant:   ['FLE-PI', 'PAL-PI', 'COEUR-PI', 'SXM-12 Poitrine', ...LOGO_CATALOG],
+            arriere: ['CRAB-01', 'WRA-01', ...LOGO_CATALOG]
         };
 
         const DIM_PRESETS = {
@@ -1054,7 +1090,7 @@
             const commande = document.getElementById('in_commande').value;
             const logos = commande.indexOf('rri') !== -1 ? LOGO_PRESETS.arriere : LOGO_PRESETS.avant;
             const sel = document.getElementById('in_logo');
-            sel.innerHTML = logos.map(l => `<option value="${l}">${l}</option>`).join('')
+            sel.innerHTML = logos.map(l => { const v = logoLabel(l); return `<option value="${v}">${v}</option>`; }).join('')
                 + `<option value="__custom__">✏ Saisir manuellement</option>`;
             handleLogoChange();
         }
@@ -1069,10 +1105,19 @@
         }
 
         function handleLogoChange() {
+            const sel = document.getElementById('in_logo');
             const custom = document.getElementById('in_logo_custom');
-            const isCustom = document.getElementById('in_logo').value === '__custom__';
+            const isCustom = sel.value === '__custom__';
             custom.classList.toggle('hidden', !isCustom);
             if (isCustom) custom.focus();
+
+            // Indice « mix » : le logo sélectionné se décline en plusieurs couleurs.
+            const hint = document.getElementById('logo-mix-hint');
+            if (hint) {
+                const isMix = / mix$/.test(sel.value);
+                hint.classList.toggle('hidden', isCustom || !isMix);
+                if (!isCustom && isMix && window.lucide) lucide.createIcons({ nodes: [hint.querySelector('[data-lucide]')] });
+            }
         }
 
         function handleDimChange() {
