@@ -28,33 +28,11 @@ db.serialize(() => {
         logo TEXT,
         couleur TEXT,
         dimension TEXT,
-        hauteur TEXT,
         quantite INTEGER,
-        papier_masquage INTEGER DEFAULT 0,
-        double_face_int INTEGER DEFAULT 0,
-        double_face_ext INTEGER DEFAULT 0,
-        gabarit_carton INTEGER DEFAULT 0,
         checked INTEGER DEFAULT 0,
         archived INTEGER DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
-
-    // Migration additive : ajoute les colonnes options aux BDD déjà existantes.
-    // ADD COLUMN est non destructif et réversible (DROP COLUMN sur SQLite récent).
-    const OPTION_COLS = ['papier_masquage', 'double_face_int', 'double_face_ext', 'gabarit_carton'];
-    db.all(`PRAGMA table_info(requests)`, [], (err, cols) => {
-        if (err || !cols) return;
-        const existing = new Set(cols.map(c => c.name));
-        OPTION_COLS.forEach(name => {
-            if (!existing.has(name)) {
-                db.run(`ALTER TABLE requests ADD COLUMN ${name} INTEGER DEFAULT 0`);
-            }
-        });
-        // Hauteur (mm) : 2e dimension pour calculer la surface en m². TEXT comme dimension.
-        if (!existing.has('hauteur')) {
-            db.run(`ALTER TABLE requests ADD COLUMN hauteur TEXT`);
-        }
-    });
 
     db.run(`CREATE TABLE IF NOT EXISTS maquettes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -355,15 +333,11 @@ io.on('connection', (socket) => {
     });
 
     socket.on('add_request', (data) => {
-        const { client, commande, logo, couleur, dimension, hauteur, quantite } = data;
-        const papier_masquage = data.papier_masquage ? 1 : 0;
-        const double_face_int = data.double_face_int ? 1 : 0;
-        const double_face_ext = data.double_face_ext ? 1 : 0;
-        const gabarit_carton = data.gabarit_carton ? 1 : 0;
-        const stmt = db.prepare(`INSERT INTO requests (client, commande, logo, couleur, dimension, hauteur, quantite, papier_masquage, double_face_int, double_face_ext, gabarit_carton) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
-        stmt.run([client, commande, logo, couleur, dimension, hauteur, quantite, papier_masquage, double_face_int, double_face_ext, gabarit_carton], function (err) {
+        const { client, commande, logo, couleur, dimension, quantite } = data;
+        const stmt = db.prepare(`INSERT INTO requests (client, commande, logo, couleur, dimension, quantite) VALUES (?, ?, ?, ?, ?, ?)`);
+        stmt.run([client, commande, logo, couleur, dimension, quantite], function (err) {
             if (!err) {
-                const newRequest = { id: this.lastID, client, commande, logo, couleur, dimension, hauteur, quantite, papier_masquage, double_face_int, double_face_ext, gabarit_carton, checked: 0, archived: 0, created_at: new Date().toISOString() };
+                const newRequest = { id: this.lastID, client, commande, logo, couleur, dimension, quantite, checked: 0, archived: 0, created_at: new Date().toISOString() };
                 io.emit('request_added', newRequest);
             }
         });
@@ -395,16 +369,12 @@ io.on('connection', (socket) => {
     });
 
     socket.on('update_request', (data) => {
-        const { id, client, commande, logo, couleur, dimension, hauteur, quantite } = data;
-        const papier_masquage = data.papier_masquage ? 1 : 0;
-        const double_face_int = data.double_face_int ? 1 : 0;
-        const double_face_ext = data.double_face_ext ? 1 : 0;
-        const gabarit_carton = data.gabarit_carton ? 1 : 0;
+        const { id, client, commande, logo, couleur, dimension, quantite } = data;
         db.run(
-            `UPDATE requests SET client=?, commande=?, logo=?, couleur=?, dimension=?, hauteur=?, quantite=?, papier_masquage=?, double_face_int=?, double_face_ext=?, gabarit_carton=? WHERE id=?`,
-            [client, commande, logo, couleur, dimension, hauteur, quantite, papier_masquage, double_face_int, double_face_ext, gabarit_carton, id],
+            `UPDATE requests SET client=?, commande=?, logo=?, couleur=?, dimension=?, quantite=? WHERE id=?`,
+            [client, commande, logo, couleur, dimension, quantite, id],
             (err) => {
-                if (!err) io.emit('request_edited', { id, client, commande, logo, couleur, dimension, hauteur, quantite, papier_masquage, double_face_int, double_face_ext, gabarit_carton });
+                if (!err) io.emit('request_edited', { id, client, commande, logo, couleur, dimension, quantite });
             }
         );
     });
