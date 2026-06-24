@@ -32,6 +32,7 @@ db.serialize(() => {
         papier_masquage INTEGER DEFAULT 0,
         double_face_int INTEGER DEFAULT 0,
         double_face_ext INTEGER DEFAULT 0,
+        gabarit_carton INTEGER DEFAULT 0,
         checked INTEGER DEFAULT 0,
         archived INTEGER DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -39,7 +40,7 @@ db.serialize(() => {
 
     // Migration additive : ajoute les colonnes options aux BDD déjà existantes.
     // ADD COLUMN est non destructif et réversible (DROP COLUMN sur SQLite récent).
-    const OPTION_COLS = ['papier_masquage', 'double_face_int', 'double_face_ext'];
+    const OPTION_COLS = ['papier_masquage', 'double_face_int', 'double_face_ext', 'gabarit_carton'];
     db.all(`PRAGMA table_info(requests)`, [], (err, cols) => {
         if (err || !cols) return;
         const existing = new Set(cols.map(c => c.name));
@@ -353,10 +354,11 @@ io.on('connection', (socket) => {
         const papier_masquage = data.papier_masquage ? 1 : 0;
         const double_face_int = data.double_face_int ? 1 : 0;
         const double_face_ext = data.double_face_ext ? 1 : 0;
-        const stmt = db.prepare(`INSERT INTO requests (client, commande, logo, couleur, dimension, quantite, papier_masquage, double_face_int, double_face_ext) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`);
-        stmt.run([client, commande, logo, couleur, dimension, quantite, papier_masquage, double_face_int, double_face_ext], function (err) {
+        const gabarit_carton = data.gabarit_carton ? 1 : 0;
+        const stmt = db.prepare(`INSERT INTO requests (client, commande, logo, couleur, dimension, quantite, papier_masquage, double_face_int, double_face_ext, gabarit_carton) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+        stmt.run([client, commande, logo, couleur, dimension, quantite, papier_masquage, double_face_int, double_face_ext, gabarit_carton], function (err) {
             if (!err) {
-                const newRequest = { id: this.lastID, client, commande, logo, couleur, dimension, quantite, papier_masquage, double_face_int, double_face_ext, checked: 0, archived: 0, created_at: new Date().toISOString() };
+                const newRequest = { id: this.lastID, client, commande, logo, couleur, dimension, quantite, papier_masquage, double_face_int, double_face_ext, gabarit_carton, checked: 0, archived: 0, created_at: new Date().toISOString() };
                 io.emit('request_added', newRequest);
             }
         });
@@ -392,11 +394,12 @@ io.on('connection', (socket) => {
         const papier_masquage = data.papier_masquage ? 1 : 0;
         const double_face_int = data.double_face_int ? 1 : 0;
         const double_face_ext = data.double_face_ext ? 1 : 0;
+        const gabarit_carton = data.gabarit_carton ? 1 : 0;
         db.run(
-            `UPDATE requests SET client=?, commande=?, logo=?, couleur=?, dimension=?, quantite=?, papier_masquage=?, double_face_int=?, double_face_ext=? WHERE id=?`,
-            [client, commande, logo, couleur, dimension, quantite, papier_masquage, double_face_int, double_face_ext, id],
+            `UPDATE requests SET client=?, commande=?, logo=?, couleur=?, dimension=?, quantite=?, papier_masquage=?, double_face_int=?, double_face_ext=?, gabarit_carton=? WHERE id=?`,
+            [client, commande, logo, couleur, dimension, quantite, papier_masquage, double_face_int, double_face_ext, gabarit_carton, id],
             (err) => {
-                if (!err) io.emit('request_edited', { id, client, commande, logo, couleur, dimension, quantite, papier_masquage, double_face_int, double_face_ext });
+                if (!err) io.emit('request_edited', { id, client, commande, logo, couleur, dimension, quantite, papier_masquage, double_face_int, double_face_ext, gabarit_carton });
             }
         );
     });

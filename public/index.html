@@ -156,6 +156,10 @@
         }
         .opt-check:checked { background-color: var(--duck); border-color: var(--duck); }
         .opt-check:checked::before { transform: scale(1); }
+        .opt-text { display: flex; flex-direction: column; line-height: 1.2; }
+        .opt-name { font-size: 13px; font-weight: 700; }
+        .opt-price { font-size: 11px; font-weight: 700; color: var(--muted-2); }
+        .opt-chip:has(.opt-check:checked) .opt-price { color: var(--duck); }
 
         /* Supprime les flèches des champs numériques */
         input[type=number]::-webkit-inner-spin-button,
@@ -528,18 +532,22 @@
             <!-- Options de finition -->
             <div class="mt-5">
                 <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2 block">Options</label>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <label class="opt-chip" for="in_papier_masquage">
                         <input type="checkbox" id="in_papier_masquage" class="opt-check">
-                        <span>Papier de masquage</span>
+                        <span class="opt-text"><span class="opt-name">Papier de masquage</span><span class="opt-price">2,4 €/m²</span></span>
                     </label>
                     <label class="opt-chip" for="in_double_face_int">
                         <input type="checkbox" id="in_double_face_int" class="opt-check">
-                        <span>Double face intérieur</span>
+                        <span class="opt-text"><span class="opt-name">Double face intérieur</span><span class="opt-price">9 €/m²</span></span>
                     </label>
                     <label class="opt-chip" for="in_double_face_ext">
                         <input type="checkbox" id="in_double_face_ext" class="opt-check">
-                        <span>Double face extérieur</span>
+                        <span class="opt-text"><span class="opt-name">Double face extérieur</span><span class="opt-price">14 €/m²</span></span>
+                    </label>
+                    <label class="opt-chip" for="in_gabarit_carton">
+                        <input type="checkbox" id="in_gabarit_carton" class="opt-check">
+                        <span class="opt-text"><span class="opt-name">Gabarit en carton</span><span class="opt-price">4 €/m²</span></span>
                     </label>
                 </div>
             </div>
@@ -850,15 +858,32 @@
             'vert-pastel': { hex: '#90D98E', label: 'Vert pastel' },
         };
 
+        // Tarifs des options de finition (€ / m²) — source unique de vérité.
+        const OPTION_PRICES = {
+            papier_masquage: 2.4,
+            double_face_int: 9,
+            double_face_ext: 14,
+            gabarit_carton:  4
+        };
+        // Affichage prix à la française : 2.4 → « 2,4 €/m² »
+        function fmtPrice(v) {
+            return String(v).replace('.', ',') + ' €/m²';
+        }
+
+        // Métadonnées d'affichage des options (ordre = ordre dans la modale)
+        const OPTION_META = [
+            { key: 'papier_masquage', icon: 'scroll', label: 'Masquage' },
+            { key: 'double_face_int', icon: 'layers', label: 'D. face int.' },
+            { key: 'double_face_ext', icon: 'layers', label: 'D. face ext.' },
+            { key: 'gabarit_carton',  icon: 'box',    label: 'Gabarit carton' }
+        ];
+
         // Badges des options de finition cochées (affichés sous la commande)
         function optionBadges(req) {
-            const opts = [];
-            if (req.papier_masquage == 1) opts.push({ icon: 'scroll', label: 'Masquage' });
-            if (req.double_face_int == 1) opts.push({ icon: 'layers', label: 'D. face int.' });
-            if (req.double_face_ext == 1) opts.push({ icon: 'layers', label: 'D. face ext.' });
+            const opts = OPTION_META.filter(o => req[o.key] == 1);
             if (opts.length === 0) return '';
             const pills = opts.map(o =>
-                `<span class="inline-flex items-center gap-1 bg-[rgba(74,98,116,0.10)] text-duck text-[10px] font-bold px-2 py-[2px] rounded-md"><i data-lucide="${o.icon}" class="w-3 h-3"></i>${o.label}</span>`
+                `<span class="inline-flex items-center gap-1 bg-[rgba(74,98,116,0.10)] text-duck text-[10px] font-bold px-2 py-[2px] rounded-md"><i data-lucide="${o.icon}" class="w-3 h-3"></i>${o.label}<span class="font-extrabold text-muted2">${fmtPrice(OPTION_PRICES[o.key])}</span></span>`
             ).join('');
             return `<div class="col-strike flex flex-wrap gap-1 mt-0.5">${pills}</div>`;
         }
@@ -925,7 +950,8 @@
                 quantite: req.quantite,
                 papier_masquage: req.papier_masquage,
                 double_face_int: req.double_face_int,
-                double_face_ext: req.double_face_ext
+                double_face_ext: req.double_face_ext,
+                gabarit_carton: req.gabarit_carton
             });
         }
 
@@ -1020,6 +1046,7 @@
                 document.getElementById('in_papier_masquage').checked = false;
                 document.getElementById('in_double_face_int').checked = false;
                 document.getElementById('in_double_face_ext').checked = false;
+                document.getElementById('in_gabarit_carton').checked = false;
                 // Show
                 modalBackdrop.classList.remove('pointer-events-none');
                 modalBackdrop.style.opacity = '1';
@@ -1094,6 +1121,7 @@
             document.getElementById('in_papier_masquage').checked = req.papier_masquage == 1;
             document.getElementById('in_double_face_int').checked = req.double_face_int == 1;
             document.getElementById('in_double_face_ext').checked = req.double_face_ext == 1;
+            document.getElementById('in_gabarit_carton').checked = req.gabarit_carton == 1;
 
             // Ouvre le modal
             modalOpen = true;
@@ -1120,11 +1148,12 @@
             const papier_masquage = document.getElementById('in_papier_masquage').checked ? 1 : 0;
             const double_face_int = document.getElementById('in_double_face_int').checked ? 1 : 0;
             const double_face_ext = document.getElementById('in_double_face_ext').checked ? 1 : 0;
+            const gabarit_carton = document.getElementById('in_gabarit_carton').checked ? 1 : 0;
 
             if (currentEditId !== null) {
-                socket.emit('update_request', { id: currentEditId, client, commande, logo, couleur, dimension, quantite, papier_masquage, double_face_int, double_face_ext });
+                socket.emit('update_request', { id: currentEditId, client, commande, logo, couleur, dimension, quantite, papier_masquage, double_face_int, double_face_ext, gabarit_carton });
             } else {
-                socket.emit('add_request', { client, commande, logo, couleur, dimension, quantite, papier_masquage, double_face_int, double_face_ext });
+                socket.emit('add_request', { client, commande, logo, couleur, dimension, quantite, papier_masquage, double_face_int, double_face_ext, gabarit_carton });
             }
 
             // Clean & Close
@@ -1138,6 +1167,7 @@
             document.getElementById('in_papier_masquage').checked = false;
             document.getElementById('in_double_face_int').checked = false;
             document.getElementById('in_double_face_ext').checked = false;
+            document.getElementById('in_gabarit_carton').checked = false;
             renderLogoPresets();
             renderDimPresets();
             currentEditId = null;
