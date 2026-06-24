@@ -28,6 +28,7 @@ db.serialize(() => {
         logo TEXT,
         couleur TEXT,
         dimension TEXT,
+        hauteur TEXT,
         quantite INTEGER,
         papier_masquage INTEGER DEFAULT 0,
         double_face_int INTEGER DEFAULT 0,
@@ -49,6 +50,10 @@ db.serialize(() => {
                 db.run(`ALTER TABLE requests ADD COLUMN ${name} INTEGER DEFAULT 0`);
             }
         });
+        // Hauteur (mm) : 2e dimension pour calculer la surface en m². TEXT comme dimension.
+        if (!existing.has('hauteur')) {
+            db.run(`ALTER TABLE requests ADD COLUMN hauteur TEXT`);
+        }
     });
 
     db.run(`CREATE TABLE IF NOT EXISTS maquettes (
@@ -350,15 +355,15 @@ io.on('connection', (socket) => {
     });
 
     socket.on('add_request', (data) => {
-        const { client, commande, logo, couleur, dimension, quantite } = data;
+        const { client, commande, logo, couleur, dimension, hauteur, quantite } = data;
         const papier_masquage = data.papier_masquage ? 1 : 0;
         const double_face_int = data.double_face_int ? 1 : 0;
         const double_face_ext = data.double_face_ext ? 1 : 0;
         const gabarit_carton = data.gabarit_carton ? 1 : 0;
-        const stmt = db.prepare(`INSERT INTO requests (client, commande, logo, couleur, dimension, quantite, papier_masquage, double_face_int, double_face_ext, gabarit_carton) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
-        stmt.run([client, commande, logo, couleur, dimension, quantite, papier_masquage, double_face_int, double_face_ext, gabarit_carton], function (err) {
+        const stmt = db.prepare(`INSERT INTO requests (client, commande, logo, couleur, dimension, hauteur, quantite, papier_masquage, double_face_int, double_face_ext, gabarit_carton) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+        stmt.run([client, commande, logo, couleur, dimension, hauteur, quantite, papier_masquage, double_face_int, double_face_ext, gabarit_carton], function (err) {
             if (!err) {
-                const newRequest = { id: this.lastID, client, commande, logo, couleur, dimension, quantite, papier_masquage, double_face_int, double_face_ext, gabarit_carton, checked: 0, archived: 0, created_at: new Date().toISOString() };
+                const newRequest = { id: this.lastID, client, commande, logo, couleur, dimension, hauteur, quantite, papier_masquage, double_face_int, double_face_ext, gabarit_carton, checked: 0, archived: 0, created_at: new Date().toISOString() };
                 io.emit('request_added', newRequest);
             }
         });
@@ -390,16 +395,16 @@ io.on('connection', (socket) => {
     });
 
     socket.on('update_request', (data) => {
-        const { id, client, commande, logo, couleur, dimension, quantite } = data;
+        const { id, client, commande, logo, couleur, dimension, hauteur, quantite } = data;
         const papier_masquage = data.papier_masquage ? 1 : 0;
         const double_face_int = data.double_face_int ? 1 : 0;
         const double_face_ext = data.double_face_ext ? 1 : 0;
         const gabarit_carton = data.gabarit_carton ? 1 : 0;
         db.run(
-            `UPDATE requests SET client=?, commande=?, logo=?, couleur=?, dimension=?, quantite=?, papier_masquage=?, double_face_int=?, double_face_ext=?, gabarit_carton=? WHERE id=?`,
-            [client, commande, logo, couleur, dimension, quantite, papier_masquage, double_face_int, double_face_ext, gabarit_carton, id],
+            `UPDATE requests SET client=?, commande=?, logo=?, couleur=?, dimension=?, hauteur=?, quantite=?, papier_masquage=?, double_face_int=?, double_face_ext=?, gabarit_carton=? WHERE id=?`,
+            [client, commande, logo, couleur, dimension, hauteur, quantite, papier_masquage, double_face_int, double_face_ext, gabarit_carton, id],
             (err) => {
-                if (!err) io.emit('request_edited', { id, client, commande, logo, couleur, dimension, quantite, papier_masquage, double_face_int, double_face_ext, gabarit_carton });
+                if (!err) io.emit('request_edited', { id, client, commande, logo, couleur, dimension, hauteur, quantite, papier_masquage, double_face_int, double_face_ext, gabarit_carton });
             }
         );
     });
