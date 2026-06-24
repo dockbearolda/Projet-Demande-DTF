@@ -457,8 +457,8 @@
                     </div>
                 </div>
                 <div>
-                    <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Dimension</label>
-                    <select id="in_dim" onchange="handleDimChange()" class="w-full text-sm font-bold border border-gray-200 bg-gray-50/50 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brandDarkBlue focus:bg-white transition-all cursor-pointer appearance-none">
+                    <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Longueur</label>
+                    <select id="in_dim" onchange="handleDimChange(); updateOptionTotal()" class="w-full text-sm font-bold border border-gray-200 bg-gray-50/50 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brandDarkBlue focus:bg-white transition-all cursor-pointer appearance-none">
                         <option value="40">40 mm</option>
                         <option value="45">45 mm</option>
                         <option value="50">50 mm</option>
@@ -470,11 +470,15 @@
                         <option value="80">80 mm</option>
                         <option value="__custom__">✏ Saisir manuellement</option>
                     </select>
-                    <input type="number" id="in_dim_custom" placeholder="Saisir en mm..." class="hidden w-full mt-2 border border-gray-200 bg-gray-50/50 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brandDarkBlue focus:bg-white text-sm font-bold text-center font-mono">
+                    <input type="number" id="in_dim_custom" oninput="updateOptionTotal()" placeholder="Saisir en mm..." class="hidden w-full mt-2 border border-gray-200 bg-gray-50/50 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brandDarkBlue focus:bg-white text-sm font-bold text-center font-mono">
+                </div>
+                <div>
+                    <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Hauteur</label>
+                    <input type="number" id="in_haut" oninput="updateOptionTotal()" placeholder="Hauteur en mm..." class="w-full border border-gray-200 bg-gray-50/50 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brandDarkBlue focus:bg-white text-sm font-bold text-center font-mono">
                 </div>
                 <div>
                     <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Qté</label>
-                    <select id="in_qte" class="w-full text-sm font-bold border border-gray-200 bg-gray-50/50 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brandDarkBlue focus:bg-white transition-all cursor-pointer appearance-none">
+                    <select id="in_qte" onchange="updateOptionTotal()" class="w-full text-sm font-bold border border-gray-200 bg-gray-50/50 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brandDarkBlue focus:bg-white transition-all cursor-pointer appearance-none">
                         <option value="1" selected>1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
@@ -534,21 +538,27 @@
                 <label class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2 block">Options</label>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <label class="opt-chip" for="in_papier_masquage">
-                        <input type="checkbox" id="in_papier_masquage" class="opt-check">
+                        <input type="checkbox" id="in_papier_masquage" class="opt-check" onchange="updateOptionTotal()">
                         <span class="opt-text"><span class="opt-name">Papier de masquage</span><span class="opt-price">2,4 €/m²</span></span>
                     </label>
                     <label class="opt-chip" for="in_double_face_int">
-                        <input type="checkbox" id="in_double_face_int" class="opt-check">
+                        <input type="checkbox" id="in_double_face_int" class="opt-check" onchange="updateOptionTotal()">
                         <span class="opt-text"><span class="opt-name">Double face intérieur</span><span class="opt-price">9 €/m²</span></span>
                     </label>
                     <label class="opt-chip" for="in_double_face_ext">
-                        <input type="checkbox" id="in_double_face_ext" class="opt-check">
+                        <input type="checkbox" id="in_double_face_ext" class="opt-check" onchange="updateOptionTotal()">
                         <span class="opt-text"><span class="opt-name">Double face extérieur</span><span class="opt-price">14 €/m²</span></span>
                     </label>
                     <label class="opt-chip" for="in_gabarit_carton">
-                        <input type="checkbox" id="in_gabarit_carton" class="opt-check">
+                        <input type="checkbox" id="in_gabarit_carton" class="opt-check" onchange="updateOptionTotal()">
                         <span class="opt-text"><span class="opt-name">Gabarit en carton</span><span class="opt-price">4 €/m²</span></span>
                     </label>
+                </div>
+
+                <!-- Total finitions calculé (surface × tarifs cochés × quantité) -->
+                <div id="opt-total" class="mt-3 flex items-center justify-between gap-3 rounded-xl border border-[rgba(74,98,116,0.14)] bg-[rgba(74,98,116,0.05)] px-4 py-3">
+                    <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Surface <span id="opt-total-surface" class="text-ink font-extrabold normal-case tracking-normal">—</span></span>
+                    <span class="text-[13px] font-bold text-muted">Total finitions <span id="opt-total-val" class="text-ink text-[17px] font-extrabold ml-1">0,00 €</span></span>
                 </div>
             </div>
 
@@ -795,7 +805,7 @@
 
                                 <div class="col-strike lg:text-center">
                                     <div class="inline-flex items-baseline bg-white/60 rounded-xl px-4 py-2 border border-[rgba(74,98,116,0.10)]">
-                                        <span class="font-bold text-ink text-[14px]">${escapeHTML(req.dimension)}</span>
+                                        <span class="font-bold text-ink text-[14px]">${escapeHTML(req.dimension)}${req.hauteur ? ' × ' + escapeHTML(String(req.hauteur)) : ''}</span>
                                         <span class="text-[10px] text-muted2 ml-1 font-bold">MM</span>
                                     </div>
                                 </div>
@@ -869,6 +879,10 @@
         function fmtPrice(v) {
             return String(v).replace('.', ',') + ' €/m²';
         }
+        // Montant € à la française : 12.5 → « 12,50 € »
+        function fmtEuro(v) {
+            return (Math.round(v * 100) / 100).toFixed(2).replace('.', ',') + ' €';
+        }
 
         // Métadonnées d'affichage des options (ordre = ordre dans la modale)
         const OPTION_META = [
@@ -878,6 +892,52 @@
             { key: 'gabarit_carton',  icon: 'box',    label: 'Gabarit carton' }
         ];
 
+        // ---- Calcul du total finitions ----
+        // Surface en m² à partir de la longueur (dimension) × hauteur, saisies en mm.
+        function lineSurfaceM2(req) {
+            const l = parseFloat(req.dimension) || 0;
+            const h = parseFloat(req.hauteur) || 0;
+            return (l * h) / 1000000; // mm² → m²
+        }
+        // Somme des tarifs €/m² des options cochées.
+        function lineOptionsRate(req) {
+            return OPTION_META.reduce((s, o) => s + (req[o.key] == 1 ? OPTION_PRICES[o.key] : 0), 0);
+        }
+        // Total finitions de la ligne : surface × tarifs cochés × quantité.
+        function lineOptionsTotal(req) {
+            const qty = parseInt(req.quantite) || 0;
+            return lineSurfaceM2(req) * lineOptionsRate(req) * qty;
+        }
+        // Surface formatée (4 décimales, virgule).
+        function fmtSurface(m2) {
+            return m2 > 0 ? (Math.round(m2 * 10000) / 10000).toString().replace('.', ',') + ' m²' : '—';
+        }
+
+        // Reconstruit un « req » depuis les champs de la modale (pour le total en direct).
+        function currentFormReq() {
+            const dimSel = document.getElementById('in_dim').value;
+            const dimension = (dimSel === '__custom__')
+                ? document.getElementById('in_dim_custom').value
+                : dimSel;
+            return {
+                dimension,
+                hauteur: document.getElementById('in_haut').value,
+                quantite: document.getElementById('in_qte').value,
+                papier_masquage: document.getElementById('in_papier_masquage').checked ? 1 : 0,
+                double_face_int: document.getElementById('in_double_face_int').checked ? 1 : 0,
+                double_face_ext: document.getElementById('in_double_face_ext').checked ? 1 : 0,
+                gabarit_carton:  document.getElementById('in_gabarit_carton').checked ? 1 : 0
+            };
+        }
+        // Met à jour l'encart « Total finitions » de la modale en temps réel.
+        function updateOptionTotal() {
+            const req = currentFormReq();
+            const surfEl = document.getElementById('opt-total-surface');
+            const valEl = document.getElementById('opt-total-val');
+            if (surfEl) surfEl.textContent = fmtSurface(lineSurfaceM2(req));
+            if (valEl) valEl.textContent = fmtEuro(lineOptionsTotal(req));
+        }
+
         // Badges des options de finition cochées (affichés sous la commande)
         function optionBadges(req) {
             const opts = OPTION_META.filter(o => req[o.key] == 1);
@@ -885,7 +945,12 @@
             const pills = opts.map(o =>
                 `<span class="inline-flex items-center gap-1 bg-[rgba(74,98,116,0.10)] text-duck text-[10px] font-bold px-2 py-[2px] rounded-md"><i data-lucide="${o.icon}" class="w-3 h-3"></i>${o.label}<span class="font-extrabold text-muted2">${fmtPrice(OPTION_PRICES[o.key])}</span></span>`
             ).join('');
-            return `<div class="col-strike flex flex-wrap gap-1 mt-0.5">${pills}</div>`;
+            // Total finitions de la ligne (si la surface est connue).
+            const total = lineOptionsTotal(req);
+            const totalPill = total > 0
+                ? `<span class="inline-flex items-center gap-1 bg-ink text-white text-[10px] font-extrabold px-2 py-[2px] rounded-md">= ${fmtEuro(total)}</span>`
+                : '';
+            return `<div class="col-strike flex flex-wrap gap-1 mt-0.5">${pills}${totalPill}</div>`;
         }
 
         // Composant Pastille
@@ -947,6 +1012,7 @@
                 logo: req.logo,
                 couleur: req.couleur,
                 dimension: req.dimension,
+                hauteur: req.hauteur,
                 quantite: req.quantite,
                 papier_masquage: req.papier_masquage,
                 double_face_int: req.double_face_int,
@@ -1047,6 +1113,8 @@
                 document.getElementById('in_double_face_int').checked = false;
                 document.getElementById('in_double_face_ext').checked = false;
                 document.getElementById('in_gabarit_carton').checked = false;
+                document.getElementById('in_haut').value = '';
+                updateOptionTotal();
                 // Show
                 modalBackdrop.classList.remove('pointer-events-none');
                 modalBackdrop.style.opacity = '1';
@@ -1113,6 +1181,9 @@
                 dimCustom.classList.remove('hidden');
             }
 
+            // Hauteur
+            document.getElementById('in_haut').value = req.hauteur || '';
+
             // Quantité
             const qteVal = parseInt(req.quantite);
             document.getElementById('in_qte').value = qteVal <= 50 ? qteVal : 50;
@@ -1122,6 +1193,9 @@
             document.getElementById('in_double_face_int').checked = req.double_face_int == 1;
             document.getElementById('in_double_face_ext').checked = req.double_face_ext == 1;
             document.getElementById('in_gabarit_carton').checked = req.gabarit_carton == 1;
+
+            // Total finitions en direct
+            updateOptionTotal();
 
             // Ouvre le modal
             modalOpen = true;
@@ -1145,15 +1219,16 @@
                 ? (document.getElementById('in_dim_custom').value || '280')
                 : (dimSel || '280');
             const quantite = document.getElementById('in_qte').value || 1;
+            const hauteur = document.getElementById('in_haut').value || '';
             const papier_masquage = document.getElementById('in_papier_masquage').checked ? 1 : 0;
             const double_face_int = document.getElementById('in_double_face_int').checked ? 1 : 0;
             const double_face_ext = document.getElementById('in_double_face_ext').checked ? 1 : 0;
             const gabarit_carton = document.getElementById('in_gabarit_carton').checked ? 1 : 0;
 
             if (currentEditId !== null) {
-                socket.emit('update_request', { id: currentEditId, client, commande, logo, couleur, dimension, quantite, papier_masquage, double_face_int, double_face_ext, gabarit_carton });
+                socket.emit('update_request', { id: currentEditId, client, commande, logo, couleur, dimension, hauteur, quantite, papier_masquage, double_face_int, double_face_ext, gabarit_carton });
             } else {
-                socket.emit('add_request', { client, commande, logo, couleur, dimension, quantite, papier_masquage, double_face_int, double_face_ext, gabarit_carton });
+                socket.emit('add_request', { client, commande, logo, couleur, dimension, hauteur, quantite, papier_masquage, double_face_int, double_face_ext, gabarit_carton });
             }
 
             // Clean & Close
@@ -1163,11 +1238,13 @@
             document.getElementById('in_logo_custom').classList.add('hidden');
             document.getElementById('in_dim_custom').value = '';
             document.getElementById('in_dim_custom').classList.add('hidden');
+            document.getElementById('in_haut').value = '';
             document.getElementById('in_qte').value = '1';
             document.getElementById('in_papier_masquage').checked = false;
             document.getElementById('in_double_face_int').checked = false;
             document.getElementById('in_double_face_ext').checked = false;
             document.getElementById('in_gabarit_carton').checked = false;
+            updateOptionTotal();
             renderLogoPresets();
             renderDimPresets();
             currentEditId = null;
