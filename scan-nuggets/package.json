@@ -1,0 +1,26 @@
+{
+  "name": "scan-nuggets",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Chrome Web Store goldmine finder — demand + rating-drift + MV2 scoring over the DebugBear 2024 dataset",
+  "scripts": {
+    "cli": "NODE_OPTIONS=--disable-warning=ExperimentalWarning tsx src/cli.ts",
+    "ingest": "npm run cli -- ingest",
+    "demand": "npm run cli -- demand",
+    "enrich": "npm run cli -- enrich",
+    "score": "npm run cli -- score",
+    "report": "npm run cli -- report",
+    "seeds": "npm run cli -- seeds",
+    "stats": "npm run cli -- stats",
+    "all": "npm run cli -- all"
+  },
+  "dependencies": {
+    "playwright": "^1.49.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
